@@ -1,23 +1,16 @@
-
-
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:myntora_app/features/myntora/presentation/widgets/shared/custom_drawer.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, ref) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: FilledButton(
-          onPressed: (){
-            ref.watch( authProvider.notifier ).logout();
-          }, 
-          
-          child: Text('Cerrar sesíon')),
-        ),
+      appBar: AppBar(title: Text('Dashboard')),
+      drawer: CustomDrawer(),
+
+      body: Center(child: Text('Dashboard')),
     );
   }
 }

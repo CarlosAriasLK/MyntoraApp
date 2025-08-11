@@ -6,6 +6,7 @@ import 'package:myntora_app/features/auth/auth.dart';
 import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myntora_app/features/auth/presentation/screens/check_auth_status.dart';
 import 'package:myntora_app/features/myntora/myntora.dart';
+import 'package:myntora_app/features/myntora/presentation/screens/screens.dart';
 
 
 final goRouterProvider = Provider((ref) {
@@ -37,6 +38,22 @@ final goRouterProvider = Provider((ref) {
     GoRoute(
       path: '/home',
       builder: (context, state) => HomeScreen(),
+    ),
+    GoRoute(
+      path: '/fichas',
+      builder: (context, state) => FichasScreen(),
+    ),
+    GoRoute(
+      path: '/programas',
+      builder: (context, state) => ProgramasFormacionScreen(),
+    ),
+    GoRoute(
+      path: '/usuarios',
+      builder: (context, state) => UsuariosScreen(),
+    ),
+    GoRoute(
+      path: '/juicios',
+      builder: (context, state) => JuiciosEvaluativosScreen(),
     ),
 
   ],  
