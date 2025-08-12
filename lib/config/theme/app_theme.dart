@@ -26,15 +26,6 @@ class AppTheme {
       backgroundColor: scaffoldBackgroundColor
     ),
 
-    filledButtonTheme: FilledButtonThemeData(
-      style: ButtonStyle(
-        textStyle: WidgetStatePropertyAll(
-          GoogleFonts.inter()
-            .copyWith(fontWeight: FontWeight.w700)
-        )
-      )
-    ),
-
     appBarTheme: AppBarTheme(
       color: scaffoldBackgroundColor,
       titleTextStyle: GoogleFonts.inter()

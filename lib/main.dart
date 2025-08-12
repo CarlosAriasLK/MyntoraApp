@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myntora_app/config/constants/environment.dart';
 import 'package:myntora_app/config/router/app_router.dart';
 import 'package:myntora_app/config/theme/app_theme.dart';
-import 'package:myntora_app/features/myntora/providers/theme_provider.dart';
+import 'package:myntora_app/features/shared/presentation/providers/theme_provider.dart';
 
 void main() async{
   await Environment.initEnvironment();

@@ -5,8 +5,9 @@ import 'package:myntora_app/config/router/app_router_notifier.dart';
 import 'package:myntora_app/features/auth/auth.dart';
 import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myntora_app/features/auth/presentation/screens/check_auth_status.dart';
-import 'package:myntora_app/features/myntora/presentation/layout/main_layout.dart';
+import 'package:myntora_app/features/fichas/presentation/screens/fichas_screen.dart';
 import 'package:myntora_app/features/myntora/presentation/screens/screens.dart';
+import 'package:myntora_app/features/shared/presentation/layout/main_layout.dart';
 
 
 final goRouterProvider = Provider((ref) {

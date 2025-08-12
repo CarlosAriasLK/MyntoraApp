@@ -1,5 +1,4 @@
 
-export 'fichas_screen.dart';
 export 'home_screen.dart';
 export 'programas_formacion_screen.dart';
 export 'usuarios_screen.dart';
