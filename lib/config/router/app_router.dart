@@ -5,7 +5,7 @@ import 'package:myntora_app/config/router/app_router_notifier.dart';
 import 'package:myntora_app/features/auth/auth.dart';
 import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myntora_app/features/auth/presentation/screens/check_auth_status.dart';
-import 'package:myntora_app/features/myntora/myntora.dart';
+import 'package:myntora_app/features/myntora/presentation/layout/main_layout.dart';
 import 'package:myntora_app/features/myntora/presentation/screens/screens.dart';
 
 
@@ -35,26 +35,33 @@ final goRouterProvider = Provider((ref) {
     ),
     
     //MYNTORA
-    GoRoute(
-      path: '/home',
-      builder: (context, state) => HomeScreen(),
-    ),
-    GoRoute(
-      path: '/fichas',
-      builder: (context, state) => FichasScreen(),
-    ),
-    GoRoute(
-      path: '/programas',
-      builder: (context, state) => ProgramasFormacionScreen(),
-    ),
-    GoRoute(
-      path: '/usuarios',
-      builder: (context, state) => UsuariosScreen(),
-    ),
-    GoRoute(
-      path: '/juicios',
-      builder: (context, state) => JuiciosEvaluativosScreen(),
-    ),
+    ShellRoute(
+      builder: (context, state, child) {
+        return MainLayout(child: child);
+      },    
+      routes: [
+        GoRoute(
+          path: '/home',
+          builder: (context, state) => HomeScreen(),
+        ),
+        GoRoute(
+          path: '/fichas',
+          builder: (context, state) => FichasScreen(),
+        ),
+        GoRoute(
+          path: '/programas',
+          builder: (context, state) => ProgramasFormacionScreen(),
+        ),
+        GoRoute(
+          path: '/usuarios',
+          builder: (context, state) => UsuariosScreen(),
+        ),
+        GoRoute(
+          path: '/juicios',
+          builder: (context, state) => JuiciosEvaluativosScreen(),
+        ),
+      ]
+    )
 
   ],  
 

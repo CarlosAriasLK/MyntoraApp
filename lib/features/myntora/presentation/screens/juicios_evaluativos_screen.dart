@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
 class JuiciosEvaluativosScreen extends StatelessWidget {
-  const JuiciosEvaluativosScreen({super.key});
+  JuiciosEvaluativosScreen({super.key});
+  final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Juicios Evaluativos'),
-      ),
+      appBar: AppBar( title: Text('Juicios Evaluativos'), ),
     );
   }
 }

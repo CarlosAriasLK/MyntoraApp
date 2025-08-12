@@ -10,7 +10,7 @@ class UserMapper {
     nombre: response['nombre'], 
     rol: response['rol'], 
     token: response['token'], 
-    debeCambiarPassword: response['debeCambiarPassword']
+    debeCambiarPassword: response['debeCambiarPassword'] ?? false,
   );
 
 }

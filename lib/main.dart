@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myntora_app/config/constants/environment.dart';
 import 'package:myntora_app/config/router/app_router.dart';
 import 'package:myntora_app/config/theme/app_theme.dart';
+import 'package:myntora_app/features/myntora/providers/theme_provider.dart';
 
 void main() async{
   await Environment.initEnvironment();
@@ -16,11 +17,12 @@ class MainApp extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
 
     final appRouter = ref.watch( goRouterProvider );
+    final isDarkMode = ref.watch( themeProvider );
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerConfig: appRouter,
-      theme: AppTheme().getTheme(),
+      theme: isDarkMode ? ThemeData.dark() : AppTheme().getTheme(),
     );
   }
 }
