@@ -22,6 +22,10 @@ class AppTheme {
 
     scaffoldBackgroundColor: scaffoldBackgroundColor,
 
+    drawerTheme: DrawerThemeData(
+      backgroundColor: scaffoldBackgroundColor
+    ),
+
     filledButtonTheme: FilledButtonThemeData(
       style: ButtonStyle(
         textStyle: WidgetStatePropertyAll(
