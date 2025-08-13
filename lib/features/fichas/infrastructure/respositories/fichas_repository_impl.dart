@@ -13,4 +13,9 @@ class FichasRepositoryImpl extends FichasRepository{
     return datasource.getFichas( token );
   }
 
+  @override
+  Future<Ficha> updateFicha(String token, String numeroFicha, Ficha nuevaFicha) {
+    return datasource.updateFicha(token, numeroFicha, nuevaFicha);
+  }
+
 }

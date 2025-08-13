@@ -27,7 +27,6 @@ class FichasNotifier extends StateNotifier<FichasState>{
   FichasNotifier({ required this.repositoryImpl, required this.token }) : super( FichasState() );
 
   Future<List<Ficha>> showFichas() async{
-
     try{
       final fichas = await repositoryImpl.getFichas( token );
 
@@ -48,6 +47,33 @@ class FichasNotifier extends StateNotifier<FichasState>{
     }
 
   }
+
+  Future<Ficha> updateFicha( Ficha nuevaFicha, String numeroFicha ) async{
+
+    try {
+      final fichaActualizada = await repositoryImpl.updateFicha(token, numeroFicha, nuevaFicha);
+
+      final fichasActualizadas = state.fichas?.map((ficha) {
+        if (ficha.id.toString() == numeroFicha) {
+          return fichaActualizada;
+        }
+        return ficha;
+      }).toList();
+
+      state = state.copyWith(
+        fichas: fichasActualizadas,
+        isLoading: false,
+        errorMessage: '',
+      );
+
+      return fichaActualizada;
+
+    } catch (e) {
+      throw Exception(e);
+    }
+
+  }
+
 }
 
 

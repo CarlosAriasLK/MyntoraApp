@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:myntora_app/config/constants/environment.dart';
 import 'package:myntora_app/features/auth/infrastructure/errors/errors.dart';
 import 'package:myntora_app/features/fichas/domain/domain.dart';
+import 'package:myntora_app/features/fichas/infrastructure/mappers/ficha_mapper.dart';
 import 'package:myntora_app/features/fichas/infrastructure/mappers/fichas_mapper.dart';
 
 class FichasDatasourceImpl extends FichasDatasource{
@@ -31,6 +32,40 @@ class FichasDatasourceImpl extends FichasDatasource{
       throw Exception();
     }
 
+  }
+
+  @override
+  Future<Ficha> updateFicha(String token, String numeroFicha, Ficha nuevaFicha) async{
+    try {
+      final response = await dio.put('/myntora/actualizarficha/$numeroFicha',
+          data: {
+            "id_programa_formacion": nuevaFicha.id_programa_formacion,
+            "jornada": nuevaFicha.jornada,
+            "fecha_inicio": nuevaFicha.fecha_inicio,
+            "fecha_fin": nuevaFicha.fecha_fin,
+            "modalidad": nuevaFicha.modalidad,
+            "etapa": nuevaFicha.etapa,
+            "jefe_ficha": nuevaFicha.jefe_ficha,
+            "oferta": nuevaFicha.oferta
+          },
+          options: Options(
+              headers: {
+                'x-token': token
+              }
+          )
+      );
+
+      final ficha = FichaMapper.jsonToEntity( response.data['fichaActualizada']['ficha'] );
+      return ficha;
+
+    } on DioException catch (e) {
+      if( e.response!.statusCode == 400 ) {
+        throw CustomError('No existe la ficha');
+      }
+      throw Exception();
+    } catch (e) {
+      throw Exception('Error actualizando ficha: $e');
+    }
   }
 
 }

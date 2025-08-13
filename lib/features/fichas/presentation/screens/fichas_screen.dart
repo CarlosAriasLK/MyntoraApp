@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myntora_app/features/fichas/domain/domain.dart';
 import 'package:myntora_app/features/fichas/presentation/providers/fichas_provider.dart';
+import 'package:myntora_app/features/fichas/presentation/widgets/custom_modal.dart';
 
 class FichasScreen extends ConsumerStatefulWidget {
   const FichasScreen({super.key});
@@ -101,18 +102,33 @@ class _CustomDateTable extends StatelessWidget {
                 Row(
                   children: [
                     Padding(
-                        padding: EdgeInsetsGeometry.all(0.2),
-                        child: IconButton(
-                            onPressed: (){},
-                            icon: Icon(Icons.edit)
-                        ),
+                      padding: const EdgeInsets.all(0.2),
+                      child: IconButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return CustomModal(
+                                ficha: ficha,
+                                onActualizar: (fichaEditada) {
+                                  print("Ficha actualizada: ${fichaEditada.jornada}");
+                                  // Aquí puedes llamar a tu API para actualizar
+                                },
+                              );
+                            },
+                          );
+                        },
+                        icon: const Icon(Icons.edit),
+                      ),
                     ),
                     Padding(
-                      padding: EdgeInsetsGeometry.all(0.2),
-                      child: IconButton(
-                          onPressed: (){},
-                          icon: Icon(Icons.delete_forever, color: Colors.red,)
-                      ),
+                        padding: EdgeInsetsGeometry.all(0.2),
+                        child: IconButton(
+                            onPressed: (){
+                              print(ficha.id.toString());
+                            },
+                            icon: Icon(Icons.delete_forever)
+                        ),
                     ),
                   ],
                 )
