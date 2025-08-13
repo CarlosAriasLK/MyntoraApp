@@ -8,6 +8,6 @@ class Environment {
     await dotenv.load(fileName: ".env");
   }
 
-  static String apiUrl = dotenv.env['API_URL'] ?? 'Api url no configurada'; 
+  static String apiUrl = dotenv.env['API_URL_EMULADOR'] ?? 'Api url no configurada';
 
 }
