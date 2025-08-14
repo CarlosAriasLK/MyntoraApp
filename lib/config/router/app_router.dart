@@ -5,8 +5,13 @@ import 'package:myntora_app/config/router/app_router_notifier.dart';
 import 'package:myntora_app/features/auth/auth.dart';
 import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myntora_app/features/auth/presentation/screens/check_auth_status.dart';
+
 import 'package:myntora_app/features/fichas/presentation/screens/fichas_screen.dart';
-import 'package:myntora_app/features/myntora/presentation/screens/screens.dart';
+
+import 'package:myntora_app/features/myntora/myntora.dart';
+import 'package:myntora_app/features/myntora/presentation/screens/juicios_evaluativos_screen.dart';
+import 'package:myntora_app/features/myntora/presentation/screens/usuarios_screen.dart';
+import 'package:myntora_app/features/programas/presentation/presentation.dart';
 import 'package:myntora_app/features/shared/presentation/layout/main_layout.dart';
 
 
@@ -51,7 +56,7 @@ final goRouterProvider = Provider((ref) {
         ),
         GoRoute(
           path: '/programas',
-          builder: (context, state) => ProgramasFormacionScreen(),
+          builder: (context, state) => ProgramasScreen(),
         ),
         GoRoute(
           path: '/usuarios',

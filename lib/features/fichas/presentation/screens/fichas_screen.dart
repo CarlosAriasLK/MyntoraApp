@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:myntora_app/features/fichas/domain/domain.dart';
 import 'package:myntora_app/features/fichas/presentation/providers/fichas_provider.dart';
 import 'package:myntora_app/features/fichas/presentation/widgets/custom_modal.dart';
@@ -62,7 +63,9 @@ class FichasScreenState extends ConsumerState<FichasScreen> {
 
 class _CustomDateTable extends StatelessWidget {
   final List<Ficha> fichas;
-  const _CustomDateTable({super.key, required this.fichas});
+  _CustomDateTable({required this.fichas});
+
+  final DateFormat formater = DateFormat('yyyy-MM-dd');
 
   @override
   Widget build(BuildContext context) {
@@ -92,8 +95,8 @@ class _CustomDateTable extends StatelessWidget {
               DataCell(Text(ficha.id.toString())),
               DataCell(Text(ficha.id_programa_formacion.toString())),
               DataCell(Text(ficha.jornada ?? '')),
-              DataCell(Text(ficha.fecha_inicio.toString() )),
-              DataCell(Text(ficha.fecha_fin.toString() )),
+              DataCell(Text(formater.format(ficha.fecha_inicio) )),
+              DataCell(Text(formater.format(ficha.fecha_fin) )),
               DataCell(Text(ficha.modalidad ?? '')),
               DataCell(Text(ficha.etapa ?? '')),
               DataCell(Text(ficha.jefe_ficha ?? '')),
@@ -110,10 +113,6 @@ class _CustomDateTable extends StatelessWidget {
                             builder: (context) {
                               return CustomModal(
                                 ficha: ficha,
-                                onActualizar: (fichaEditada) {
-                                  print("Ficha actualizada: ${fichaEditada.jornada}");
-                                  // Aquí puedes llamar a tu API para actualizar
-                                },
                               );
                             },
                           );

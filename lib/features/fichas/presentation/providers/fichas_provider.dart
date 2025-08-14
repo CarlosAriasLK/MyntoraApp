@@ -39,22 +39,21 @@ class FichasNotifier extends StateNotifier<FichasState>{
       return fichas;
 
     } on CustomError catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.errorMessage);
+      state = state.copyWith( errorMessage: e.errorMessage, isLoading: false, );
       throw Exception(e.errorMessage);
     } catch (e) {
-      state = state.copyWith(isLoading: false);
+      state = state.copyWith( errorMessage: 'Error inesperado',isLoading: false,);
       throw Exception('malo');
     }
-
   }
 
-  Future<Ficha> updateFicha( Ficha nuevaFicha, String numeroFicha ) async{
-
+  Future<Ficha> updateFicha( Ficha nuevaFicha, int numeroFicha ) async{
+    state = state.copyWith(isLoading: true);
     try {
       final fichaActualizada = await repositoryImpl.updateFicha(token, numeroFicha, nuevaFicha);
 
       final fichasActualizadas = state.fichas?.map((ficha) {
-        if (ficha.id.toString() == numeroFicha) {
+        if (ficha.id == numeroFicha) {
           return fichaActualizada;
         }
         return ficha;
@@ -68,8 +67,9 @@ class FichasNotifier extends StateNotifier<FichasState>{
 
       return fichaActualizada;
 
-    } catch (e) {
-      throw Exception(e);
+    } on CustomError catch (e) {
+      state = state.copyWith(errorMessage: e.errorMessage, isLoading: false);
+      throw Exception();
     }
 
   }
@@ -85,7 +85,7 @@ class FichasState {
 
   FichasState({
     this.fichas,
-    this.isLoading = false,
+    this.isLoading = true,
     this.errorMessage = '',
   });
 
