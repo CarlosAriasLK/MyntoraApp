@@ -1,39 +1,30 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:myntora_app/features/auth/domain/domain.dart';
 import 'package:myntora_app/features/auth/infrastructure/errors/errors.dart';
 import 'package:myntora_app/features/auth/infrastructure/infrastructure.dart';
 import 'package:myntora_app/features/shared/infrastructure/services/key_value_storage.dart';
 import 'package:myntora_app/features/shared/infrastructure/services/key_value_storage_impl.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'auth_provider.g.dart';
 
 
-final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
+@Riverpod(keepAlive: true)
+class Auth extends _$Auth {
 
-  final repositoryImpl = AuthRepositoryImpl();
-  final keyValueStorageImpl = KeyValueStorageImpl();
+  late final AuthRepository repositoryImpl;
+  late final KeyValueStorage keyValueStorage;
 
-  return AuthNotifier(
-    repositoryImpl: repositoryImpl ,
-    keyValueStorage: keyValueStorageImpl
-  );
+  @override
+   AuthState build() {
+    repositoryImpl = AuthRepositoryImpl();
+    keyValueStorage = KeyValueStorageImpl();
 
-});
-
-
-class AuthNotifier extends StateNotifier<AuthState> {
-
-  final AuthRepository repositoryImpl;
-  final KeyValueStorage keyValueStorage;
-
-  AuthNotifier({
-    required this.keyValueStorage,
-    required this.repositoryImpl
-  }) : super( AuthState() ){
-    chechAuthStatus();
+    _chechAuthStatus();
+    return AuthState();
   }
 
-
   Future<void> loginUser( String email, String password ) async{
-    await Future.delayed(Duration( milliseconds: 500 ));
 
     try {
       final user = await repositoryImpl.login(email, password);
@@ -53,7 +44,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
 
-  Future<void> chechAuthStatus() async{
+  Future<void> _chechAuthStatus() async{
     final token = await keyValueStorage.getValue<String>('token');
     if( token == null ) return logout();
 
@@ -69,22 +60,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       logout( errorMessage: e.toString() );
     }
-
   }
-
 
   Future<void> logout({ String? errorMessage }) async{
     await keyValueStorage.removeKey('token');
 
     state = state.copyWith(
-      authStatus: AuthStatus.notAuthenticated,
-      errorMessage: errorMessage,
-      user: null
+        authStatus: AuthStatus.notAuthenticated,
+        errorMessage: errorMessage,
+        user: null
     );
   }
 
 }
-
 
 enum AuthStatus { checking, authenticated, notAuthenticated }
 class AuthState {

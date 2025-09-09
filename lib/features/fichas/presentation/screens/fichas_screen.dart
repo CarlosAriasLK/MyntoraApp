@@ -1,34 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:myntora_app/features/fichas/domain/domain.dart';
 import 'package:myntora_app/features/fichas/presentation/providers/fichas_provider.dart';
 import 'package:myntora_app/features/fichas/presentation/widgets/custom_modal.dart';
 
-class FichasScreen extends ConsumerStatefulWidget {
-  const FichasScreen({super.key});
 
-  @override
-  FichasScreenState createState() => FichasScreenState();
-}
-
-class FichasScreenState extends ConsumerState<FichasScreen> {
-
-  @override
-  void initState() {
-    super.initState();
-    ref.read( fichasProvider.notifier ).showFichas();
-  }
+class FichasScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fichasState = ref.watch(fichasProvider);
-
-    if (fichasState.isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    final fichas = fichasState.fichas ?? [];
 
     return Scaffold(
       appBar: AppBar(
@@ -53,7 +33,7 @@ class FichasScreenState extends ConsumerState<FichasScreen> {
 
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: _CustomDateTable( fichas: fichas ),
+            child: _CustomDateTable(),
           ),
         ],
       ),
@@ -61,14 +41,24 @@ class FichasScreenState extends ConsumerState<FichasScreen> {
   }
 }
 
-class _CustomDateTable extends StatelessWidget {
-  final List<Ficha> fichas;
-  _CustomDateTable({required this.fichas});
-
+class _CustomDateTable extends ConsumerWidget {
   final DateFormat formater = DateFormat('yyyy-MM-dd');
+  _CustomDateTable();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final fichasState = ref.watch( fichasProvider );
+
+    if( fichasState.isLoading ) {
+      return Center(child: CircularProgressIndicator(),);
+    }
+
+    if (fichasState.errorMessage.isNotEmpty) {
+      return Center(child: Text('Error: ${fichasState.errorMessage}'));
+    }
+
+    final fichas = fichasState.fichas ?? [];
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: DataTable(
@@ -93,14 +83,14 @@ class _CustomDateTable extends StatelessWidget {
           return DataRow(
             cells: [
               DataCell(Text(ficha.id.toString())),
-              DataCell(Text(ficha.id_programa_formacion.toString())),
-              DataCell(Text(ficha.jornada ?? '')),
-              DataCell(Text(formater.format(ficha.fecha_inicio) )),
-              DataCell(Text(formater.format(ficha.fecha_fin) )),
-              DataCell(Text(ficha.modalidad ?? '')),
-              DataCell(Text(ficha.etapa ?? '')),
-              DataCell(Text(ficha.jefe_ficha ?? '')),
-              DataCell(Text(ficha.oferta ?? '')),
+              DataCell(Text(ficha.idProgramaFormacion.toString())),
+              DataCell(Text(ficha.jornada)),
+              DataCell(Text(formater.format(ficha.fechaInicio) )),
+              DataCell(Text(formater.format(ficha.fechaFin) )),
+              DataCell(Text(ficha.modalidad)),
+              DataCell(Text(ficha.etapa)),
+              DataCell(Text(ficha.jefeFicha)),
+              DataCell(Text(ficha.oferta)),
               DataCell(
                 Row(
                   children: [

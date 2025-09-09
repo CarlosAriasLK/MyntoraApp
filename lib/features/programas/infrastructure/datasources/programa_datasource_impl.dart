@@ -9,9 +9,7 @@ import 'package:myntora_app/features/programas/infrastructure/mappers/programas_
 
 class ProgramaDatasourceImpl extends ProgramaDatasource {
   
-  final dio = Dio( BaseOptions(
-    baseUrl: Environment.apiUrl 
-  ));
+  final dio = Dio( BaseOptions( baseUrl: Environment.apiUrl ) );
   
   @override
   Future<List<Programa>> getProgramas( String token ) async{

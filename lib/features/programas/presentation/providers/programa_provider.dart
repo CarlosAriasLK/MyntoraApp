@@ -1,68 +1,75 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+
 import 'package:myntora_app/features/auth/infrastructure/errors/errors.dart';
+import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myntora_app/features/programas/domain/domain.dart';
-import 'package:myntora_app/features/programas/presentation/presentation.dart';
+import 'package:myntora_app/features/programas/infrastructure/infrastructure.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final programaProvider = StateNotifierProvider.family<ProgramaNotifier, ProgramaState, String>((ref, token) {
-  final repositoryImpl = ref.watch( programaRepositoryProvider );
-  return ProgramaNotifier(token: token, repositoryImpl: repositoryImpl);
-});
+part 'programa_provider.g.dart';
 
-class ProgramaNotifier extends StateNotifier<ProgramaState> {
+@riverpod
+class Programas extends _$Programas {
 
-  final String token;
-  final ProgramaRepository repositoryImpl;
-  ProgramaNotifier({required this.token, required this.repositoryImpl}) : super( ProgramaState() );
+  late final ProgramaRepository programaRepository;
+  late final String token;
 
+  @override
+  ProgramaState build() {
 
-  Future<List<Programa>> showProgramas() async{
+    final auhtProvider = ref.watch( authProvider );
+    token = auhtProvider.user?.token ?? 'no-token';
+
+    programaRepository = ProgramaRepositoryImpl();
+    getProgramas();
+    return ProgramaState();
+  }
+
+  Future<List<Programa>> getProgramas() async{
+
     try {
-      final programas = await repositoryImpl.getProgramas(token);
-
+      final programas = await programaRepository.getProgramas(token);
       state = state.copyWith(
-        errorMessage: '',
-        isLoading: false,
         programas: programas,
+        errorMessage: '',
+        isLoading: false
       );
 
       return programas;
 
     } on CustomError catch (e) {
-      state = state.copyWith(errorMessage: e.errorMessage, isLoading: false,);
-      throw Exception(e.errorMessage);
+      state = state.copyWith( errorMessage: e.errorMessage );
+      throw Exception('Error: $e');
     } catch (e) {
-      state = state.copyWith( errorMessage: 'Error inesperado', isLoading: false,);
-      throw Exception('Malo');
+      state = state.copyWith( errorMessage: 'Error al cargar programas' );
+      throw Exception('Error: $e');
     }
 
   }
 
-
 }
-
-
 
 
 class ProgramaState {
 
-  final bool isLoading;
-  final String errorMessage;
   final List<Programa>? programas;
+  final String errorMessage;
+  final bool isLoading;
 
   ProgramaState({
-    this.isLoading = true,
+    this.programas,
     this.errorMessage = '',
-    this.programas
+    this.isLoading = true
   });
 
   ProgramaState copyWith({
-    bool? isLoading,
-    String? errorMessage,
     List<Programa>? programas,
+    String? errorMessage,
+    bool? isLoading
   }) => ProgramaState(
     errorMessage: errorMessage ?? this.errorMessage,
-    isLoading: isLoading ?? this.isLoading,
     programas: programas ?? this.programas,
+    isLoading: isLoading ?? this.isLoading,
   );
 
 }

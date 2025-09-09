@@ -3,39 +3,38 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myntora_app/features/auth/infrastructure/errors/errors.dart';
 import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myntora_app/features/fichas/domain/domain.dart';
+import 'package:myntora_app/features/fichas/infrastructure/infrastructure.dart';
 import 'package:myntora_app/features/fichas/presentation/presentation.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 
-final fichasProvider = StateNotifierProvider<FichasNotifier, FichasState>((ref) {
-  final authState = ref.watch( authProvider );
+part 'fichas_provider.g.dart';
 
-  if( authState.user == null ) {
-    print(authState.user);
-    return FichasNotifier(repositoryImpl: ref.watch(fichasRepositoryProvider), token: 'no-token');
+@riverpod
+class Fichas extends _$Fichas {
+  late final String token;
+  late final FichasRepository repositoryImpl;
+
+  @override
+  FichasState build() {
+    final authState = ref.watch( authProvider );
+
+    token = authState.user?.token ?? 'no-token';
+    repositoryImpl = FichasRepositoryImpl();
+
+    showFichas();
+    return FichasState();
   }
-
-  final repositoryImpl = ref.watch( fichasRepositoryProvider );
-  return FichasNotifier(repositoryImpl: repositoryImpl, token: authState.user!.token );
-});
-
-
-class FichasNotifier extends StateNotifier<FichasState>{
-
-  final String token;
-  final FichasRepository repositoryImpl;
-
-  FichasNotifier({ required this.repositoryImpl, required this.token }) : super( FichasState() );
 
   Future<List<Ficha>> showFichas() async{
     try{
       final fichas = await repositoryImpl.getFichas( token );
 
       state = state.copyWith(
-        fichas: fichas,
-        errorMessage: '',
-        isLoading: false
+          isLoading: false,
+          fichas: fichas,
+          errorMessage: '',
       );
-
       return fichas;
 
     } on CustomError catch (e) {
@@ -43,12 +42,11 @@ class FichasNotifier extends StateNotifier<FichasState>{
       throw Exception(e.errorMessage);
     } catch (e) {
       state = state.copyWith( errorMessage: 'Error inesperado',isLoading: false,);
-      throw Exception('malo');
+      throw Exception('Error: $e');
     }
   }
 
   Future<Ficha> updateFicha( Ficha nuevaFicha, int numeroFicha ) async{
-    state = state.copyWith(isLoading: true);
     try {
       final fichaActualizada = await repositoryImpl.updateFicha(token, numeroFicha, nuevaFicha);
 
@@ -69,11 +67,10 @@ class FichasNotifier extends StateNotifier<FichasState>{
 
     } on CustomError catch (e) {
       state = state.copyWith(errorMessage: e.errorMessage, isLoading: false);
-      throw Exception();
+      throw Exception('Error: $e');
     }
 
   }
-
 }
 
 

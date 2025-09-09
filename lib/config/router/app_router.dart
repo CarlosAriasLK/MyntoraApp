@@ -1,7 +1,6 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:myntora_app/config/router/app_router_notifier.dart';
 import 'package:myntora_app/features/auth/auth.dart';
 import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myntora_app/features/auth/presentation/screens/check_auth_status.dart';
@@ -13,84 +12,83 @@ import 'package:myntora_app/features/myntora/presentation/screens/juicios_evalua
 import 'package:myntora_app/features/myntora/presentation/screens/usuarios_screen.dart';
 import 'package:myntora_app/features/programas/presentation/presentation.dart';
 import 'package:myntora_app/features/shared/presentation/layout/main_layout.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+part 'app_router.g.dart';
 
-final goRouterProvider = Provider((ref) {
-
-  final goRouterNotifier = ref.watch( goRouterNotifierProvider );
+@riverpod
+GoRouter goRouter(Ref ref) {
+  final authNotifierProvider = ref.watch( authProvider );
 
   return GoRouter(
-  initialLocation: '/splash',
-  refreshListenable: goRouterNotifier,
+    initialLocation: '/splash',
 
-  routes: [
-    //LOGIN
-    GoRoute(
-      path: '/splash',
-      builder: (context, state) => CheckAuthStatus(),
-    ),
+    routes: [
+      //LOGIN
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => CheckAuthStatus(),
+      ),
 
-    GoRoute(
-      path: '/login',
-      builder: (context, state) => LoginScreen(),
-    ),
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => LoginScreen(),
+      ),
 
-    GoRoute(
-      path: '/recuperar',
-      builder: (context, state) => RecuperarPasswordScreen(),
-    ),
-    
-    //MYNTORA
-    ShellRoute(
-      builder: (context, state, child) {
-        return MainLayout(child: child);
-      },    
-      routes: [
-        GoRoute(
-          path: '/home',
-          builder: (context, state) => HomeScreen(),
-        ),
-        GoRoute(
-          path: '/fichas',
-          builder: (context, state) => FichasScreen(),
-        ),
-        GoRoute(
-          path: '/programas',
-          builder: (context, state) => ProgramasScreen(),
-        ),
-        GoRoute(
-          path: '/usuarios',
-          builder: (context, state) => UsuariosScreen(),
-        ),
-        GoRoute(
-          path: '/juicios',
-          builder: (context, state) => JuiciosEvaluativosScreen(),
-        ),
-      ]
-    )
+      GoRoute(
+        path: '/recuperar',
+        builder: (context, state) => RecuperarPasswordScreen(),
+      ),
 
-  ],  
+      //MYNTORA
+      ShellRoute(
+          builder: (context, state, child) {
+            return MainLayout(child: child);
+          },
+          routes: [
+            GoRoute(
+              path: '/home',
+              builder: (context, state) => HomeScreen(),
+            ),
+            GoRoute(
+              path: '/fichas',
+              builder: (context, state) => FichasScreen(),
+            ),
+            GoRoute(
+              path: '/programas',
+              builder: (context, state) => ProgramasScreen(),
+            ),
+            GoRoute(
+              path: '/usuarios',
+              builder: (context, state) => UsuariosScreen(),
+            ),
+            GoRoute(
+              path: '/juicios',
+              builder: (context, state) => JuiciosEvaluativosScreen(),
+            ),
+          ]
+      )
 
-  redirect: (context, state) {
+    ],
 
-    final isGoingTo = state.matchedLocation;
-    final authStatus = goRouterNotifier.authStatus;
+    redirect: (context, state) {
 
-    if( isGoingTo == '/splash' && authStatus == AuthStatus.checking ) return null;
+      final isGoingTo = state.matchedLocation;
+      final authStatus = authNotifierProvider.authStatus;
 
-    if( authStatus == AuthStatus.notAuthenticated ) {
-      if( isGoingTo == '/login' || isGoingTo == '/recuperar') return null;
-      return '/login';
-    }
+      if( isGoingTo == '/splash' && authStatus == AuthStatus.checking ) return null;
 
-    if( authStatus == AuthStatus.authenticated ) {
-      if( isGoingTo == '/login' || isGoingTo == '/recuperar' || isGoingTo == '/splash' ) return '/home';
-    }
+      if( authStatus == AuthStatus.notAuthenticated ) {
+        if( isGoingTo == '/login' || isGoingTo == '/recuperar') return null;
+        return '/login';
+      }
 
-    return null;
-  },
+      if( authStatus == AuthStatus.authenticated ) {
+        if( isGoingTo == '/login' || isGoingTo == '/recuperar' || isGoingTo == '/splash' ) return '/home';
+      }
+
+      return null;
+    },
 
   );
-});
-
-
+}

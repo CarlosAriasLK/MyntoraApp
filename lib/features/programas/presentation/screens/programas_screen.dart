@@ -1,41 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myntora_app/features/programas/domain/domain.dart';
 import 'package:myntora_app/features/programas/presentation/providers/programa_provider.dart';
 
-class ProgramasScreen extends ConsumerStatefulWidget {
-  const ProgramasScreen({super.key});
+
+class ProgramasScreen extends ConsumerWidget {
 
   @override
-  ProgramasScreenState createState() => ProgramasScreenState();
-}
+  Widget build(BuildContext context, ref) {
 
-class ProgramasScreenState extends ConsumerState<ProgramasScreen> {
+    final programaState = ref.watch( programasProvider );
 
-  @override
-  void initState() {
-    super.initState();
-    final token = ref.read(authProvider).user?.token;
-    if( token != null ) {
-      ref.read( programaProvider(token).notifier ).showProgramas();
-    }
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-
-    final token = ref.watch( authProvider ).user?.token;
-    if( token == null ){
+    if( programaState.isLoading ){
       return Center(child: CircularProgressIndicator());
     }
 
-    final programaState = ref.watch(programaProvider(token));
-
-    if( programaState.isLoading ){
-      return CircularProgressIndicator();
+    if( programaState.errorMessage.isNotEmpty ) {
+      return Center(child: Text('Error: ${programaState.errorMessage}'),);
     }
+
+    final programas = programaState.programas ?? [];
 
     return Scaffold(
       appBar: AppBar(
@@ -64,7 +48,7 @@ class ProgramasScreenState extends ConsumerState<ProgramasScreen> {
 
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: _ProgramasDataTable( programas: programaState.programas! ),
+              child: _ProgramasDataTable( programas: programas ),
             ),
 
           ],

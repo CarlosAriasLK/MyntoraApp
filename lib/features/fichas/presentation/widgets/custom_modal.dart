@@ -31,13 +31,13 @@ class CustomModalState extends ConsumerState<CustomModal> {
   @override
   void initState() {
     super.initState();
-    idProgramaController.text = widget.ficha.id_programa_formacion.toString();
+    idProgramaController.text = widget.ficha.idProgramaFormacion.toString();
     jornadaController.text = widget.ficha.jornada;
-    inicioController.text = formatter.format(widget.ficha.fecha_fin);
-    finController.text = formatter.format(widget.ficha.fecha_fin);
+    inicioController.text = formatter.format(widget.ficha.fechaInicio);
+    finController.text = formatter.format(widget.ficha.fechaFin);
     modalidadController.text = widget.ficha.modalidad;
     etapaController.text = widget.ficha.etapa;
-    jefeController.text = widget.ficha.jefe_ficha;
+    jefeController.text = widget.ficha.jefeFicha;
     ofertaController.text = widget.ficha.oferta;
   }
 
@@ -100,6 +100,7 @@ class CustomModalState extends ConsumerState<CustomModal> {
                         border: OutlineInputBorder(),
                     ),
                   ),
+
                   SizedBox(height: 10,),
                   TextFormField(
                     controller: jornadaController,
@@ -108,6 +109,7 @@ class CustomModalState extends ConsumerState<CustomModal> {
                         border: OutlineInputBorder()
                     ),
                   ),
+
                   SizedBox(height: 10,),
                   TextFormField(
                     controller: inicioController,
@@ -116,14 +118,16 @@ class CustomModalState extends ConsumerState<CustomModal> {
                         border: OutlineInputBorder()
                     ),
                   ),
+
                   SizedBox(height: 10,),
                   TextFormField(
                     controller: finController,
                     decoration: InputDecoration(
-                        hint: Text(widget.ficha.fecha_fin.toString()),
+                        hint: Text(widget.ficha.fechaInicio.toString()),
                         border: OutlineInputBorder()
                     ),
                   ),
+
                   SizedBox(height: 10,),
                   TextFormField(
                     controller: modalidadController,
@@ -132,6 +136,7 @@ class CustomModalState extends ConsumerState<CustomModal> {
                         border: OutlineInputBorder()
                     ),
                   ),
+
                   SizedBox(height: 10,),
                   TextFormField(
                     controller: etapaController,
@@ -145,7 +150,7 @@ class CustomModalState extends ConsumerState<CustomModal> {
                   TextFormField(
                     controller: jefeController,
                     decoration: InputDecoration(
-                        hint: Text(widget.ficha.jefe_ficha),
+                        hint: Text(widget.ficha.jefeFicha),
                         border: OutlineInputBorder( borderRadius: BorderRadius.circular(10) )
                     ),
                   ),
@@ -167,13 +172,13 @@ class CustomModalState extends ConsumerState<CustomModal> {
                         (){
                         final nuevaFicha = Ficha(
                           id: widget.ficha.id,
-                          id_programa_formacion: int.parse(idProgramaController.text),
+                          idProgramaFormacion: int.parse(idProgramaController.text),
                           jornada: jornadaController.text,
-                          fecha_inicio: DateTime.parse(inicioController.text),
-                          fecha_fin: DateTime.parse(finController.text),
+                          fechaInicio: DateTime.parse(inicioController.text),
+                          fechaFin: DateTime.parse(finController.text),
                           modalidad: modalidadController.text,
                           etapa: etapaController.text,
-                          jefe_ficha: jefeController.text,
+                          jefeFicha: jefeController.text,
                           oferta: ofertaController.text,
                         );
                         ref.read( fichasProvider.notifier ).updateFicha( nuevaFicha, widget.ficha.id );

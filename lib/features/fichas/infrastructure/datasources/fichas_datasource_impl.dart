@@ -10,9 +10,7 @@ import 'package:myntora_app/features/fichas/infrastructure/mappers/fichas_mapper
 
 class FichasDatasourceImpl extends FichasDatasource{
 
-  final dio = Dio( BaseOptions(
-    baseUrl: Environment.apiUrl
-  ));
+  final dio = Dio( BaseOptions( baseUrl: Environment.apiUrl ) );
 
   @override
   Future<List<Ficha>> getFichas( String token ) async{
@@ -22,15 +20,14 @@ class FichasDatasourceImpl extends FichasDatasource{
           'x-token': token
         }
       ));
-      final fichas = FichasMapper.jsonListToEntity( response.data['fichas'] );
+      final fichas = FichasMapper.jsonListToEntity(response.data['fichas']);
       return fichas;
 
     } on DioException catch (e) {
       if( e.response?.statusCode == 404 ) {
         CustomError('Error al cargar las fichas');
       }
-      print('Error $e');
-      throw Exception();
+      throw Exception('Error: $e');
     }
 
   }
@@ -41,13 +38,13 @@ class FichasDatasourceImpl extends FichasDatasource{
     try {
       final response = await dio.put('/myntora/actualizarficha/$idFicha',
           data: {
-            "id_programa_formacion": nuevaFicha.id_programa_formacion,
+            "id_programa_formacion": nuevaFicha.idProgramaFormacion,
             "jornada": nuevaFicha.jornada,
-            "fecha_inicio": formatter.format(nuevaFicha.fecha_inicio),
-            "fecha_fin": formatter.format(nuevaFicha.fecha_fin),
+            "fecha_inicio": formatter.format(nuevaFicha.fechaInicio),
+            "fecha_fin": formatter.format(nuevaFicha.fechaFin),
             "modalidad": nuevaFicha.modalidad,
             "etapa": nuevaFicha.etapa,
-            "jefe_ficha": nuevaFicha.jefe_ficha,
+            "jefe_ficha": nuevaFicha.jefeFicha,
             "oferta": nuevaFicha.oferta
           },
           options: Options(

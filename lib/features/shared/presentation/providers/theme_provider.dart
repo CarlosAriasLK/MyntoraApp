@@ -1,5 +1,18 @@
 
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final themeProvider = StateProvider<bool>((ref) => false);
+part 'theme_provider.g.dart';
+
+@riverpod
+class Theme extends _$Theme {
+  @override
+  bool build() {
+    return false;
+  }
+
+  void changeTheme(){
+    state = !state;
+  }
+}

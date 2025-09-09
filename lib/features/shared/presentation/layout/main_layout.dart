@@ -27,7 +27,7 @@ class MainLayoutState extends ConsumerState<MainLayout> {
               ref.watch( themeProvider ) ? Icons.wb_sunny : Icons.nightlight_round,
             ),
             onPressed: () {
-              ref.read( themeProvider.notifier ).update( (value) => !value );
+              ref.read( themeProvider.notifier ).changeTheme();
             },
           ),
         ],
@@ -37,6 +37,7 @@ class MainLayoutState extends ConsumerState<MainLayout> {
         child: SafeArea(
           child: Column(
             children: [
+
               DrawerHeader(
                 child: Row(
                   children: [
@@ -59,6 +60,7 @@ class MainLayoutState extends ConsumerState<MainLayout> {
                   ],
                 ),
               ),
+
               ListTile(
                 title: const Text('Dashboard'),
                 leading: Icon(Icons.dashboard),
@@ -138,7 +140,9 @@ class MainLayoutState extends ConsumerState<MainLayout> {
           ),
         ),
       ),
+
       body: widget.child,
+
     );
   }
 }

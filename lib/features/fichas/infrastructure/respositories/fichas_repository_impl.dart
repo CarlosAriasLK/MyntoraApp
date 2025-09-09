@@ -2,11 +2,14 @@
 
 
 import 'package:myntora_app/features/fichas/domain/domain.dart';
+import 'package:myntora_app/features/fichas/infrastructure/datasources/fichas_datasource_impl.dart';
 
 class FichasRepositoryImpl extends FichasRepository{
 
   final FichasDatasource datasource;
-  FichasRepositoryImpl({required this.datasource});
+  FichasRepositoryImpl({
+    FichasDatasource? datasource
+  }): datasource = datasource ?? FichasDatasourceImpl();
 
   @override
   Future<List<Ficha>> getFichas( String token ) {

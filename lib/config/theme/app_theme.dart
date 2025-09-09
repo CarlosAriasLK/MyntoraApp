@@ -8,8 +8,13 @@ const scaffoldBackgroundColor = Color(0xffFFFFFF);
 
 class AppTheme {
 
+  final bool isDarkMode;
+  AppTheme({required this.isDarkMode});
+
+
   ThemeData getTheme() => ThemeData(
     colorSchemeSeed: colorSeed,
+    brightness: isDarkMode ? Brightness.dark : Brightness.light,
 
     textTheme: TextTheme(
       titleLarge: GoogleFonts.inter()
