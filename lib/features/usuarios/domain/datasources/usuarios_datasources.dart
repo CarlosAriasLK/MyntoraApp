@@ -1,0 +1,14 @@
+
+
+
+
+import 'package:myntora_app/features/usuarios/domain/entities/usuario.dart';
+
+abstract class UsuariosDatasources {
+
+  Future<List<Usuario>> getUsuarios( String token );
+
+  Future<Usuario> getUsuario( int uid, String token );
+
+  Future<Usuario> updateUsuario( String token, Usuario usuario );
+}

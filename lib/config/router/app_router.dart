@@ -9,9 +9,9 @@ import 'package:myntora_app/features/fichas/presentation/screens/fichas_screen.d
 
 import 'package:myntora_app/features/myntora/myntora.dart';
 import 'package:myntora_app/features/myntora/presentation/screens/juicios_evaluativos_screen.dart';
-import 'package:myntora_app/features/myntora/presentation/screens/usuarios_screen.dart';
 import 'package:myntora_app/features/programas/presentation/presentation.dart';
 import 'package:myntora_app/features/shared/presentation/layout/main_layout.dart';
+import 'package:myntora_app/features/usuarios/presentation/screens/usuarios_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'app_router.g.dart';
@@ -59,12 +59,12 @@ GoRouter goRouter(Ref ref) {
               builder: (context, state) => ProgramasScreen(),
             ),
             GoRoute(
-              path: '/usuarios',
-              builder: (context, state) => UsuariosScreen(),
-            ),
-            GoRoute(
               path: '/juicios',
               builder: (context, state) => JuiciosEvaluativosScreen(),
+            ),
+            GoRoute(
+              path: '/usuarios',
+              builder: (context, state) => UsuariosScreen(),
             ),
           ]
       )

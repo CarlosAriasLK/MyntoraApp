@@ -25,34 +25,31 @@ class ProgramasScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text('Programas de formacion'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Align(
-                  alignment: Alignment.topLeft,
-                  child: SizedBox( width: 140, child: FilledButton(
-                      style: ButtonStyle(
-                          backgroundColor: WidgetStatePropertyAll(Colors.green),
-                          elevation: WidgetStatePropertyAll(2)
-                      ),
-                      onPressed: (){},
-                      child: Text('Cargar')),
-                  )
+            padding: EdgeInsetsGeometry.symmetric(horizontal: 15, vertical: 10),
+            child: FilledButton(
+              onPressed: (){}, 
+              style: ButtonStyle(
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(7))
+                )
               ),
+              child: Text('Cargar Programas'),
             ),
-            SizedBox(height: 10,),
-
-            SingleChildScrollView(
+          ),
+      
+          Padding(
+            padding: EdgeInsetsGeometry.symmetric(horizontal: 15, vertical: 10),
+            child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: _ProgramasDataTable( programas: programas ),
             ),
-
-          ],
-        ),
+          ),
+      
+        ],
       ),
     );
   }
@@ -67,26 +64,32 @@ class _ProgramasDataTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return DataTable(
 
-        decoration: BoxDecoration(
-            border: Border.all(),
-            borderRadius: BorderRadius.circular(10)
-        ),
-        columns: [
-          DataColumn(label: Text('Id')),
-          DataColumn(label: Text('Nombre')),
-          DataColumn(label: Text('Nivel')),
-          DataColumn(label: Text('Estado')),
-        ],
-        rows: programas.map((programa) {
-          return DataRow(
-            cells: [
-              DataCell(Text(programa.id.toString())),
-              DataCell(Text(programa.nombre)),
-              DataCell(Text(programa.estado)),
-              DataCell(Text(programa.nivel)),
-            ]
-          );
-        }).toList(),
+      dividerThickness: 1.2,
+
+      border: TableBorder.symmetric(
+        inside: BorderSide(color: Colors.grey.shade300, width: 1),
+      ),
+
+      headingRowColor: WidgetStatePropertyAll( Color.fromARGB(20, 0, 200, 10) ),
+      headingTextStyle: const TextStyle( fontWeight: FontWeight.bold, fontSize: 15, ),
+
+      
+      columns: [
+        DataColumn(label: Text('Id')),
+        DataColumn(label: Text('Nombre')),
+        DataColumn(label: Text('Nivel')),
+        DataColumn(label: Text('Estado')),
+      ],
+      rows: programas.map((programa) {
+        return DataRow(
+          cells: [
+            DataCell(Text(programa.id.toString())),
+            DataCell(Text(programa.nombre)),
+            DataCell(Text(programa.estado)),
+            DataCell(Text(programa.nivel)),
+          ]
+        );
+      }).toList(),
     );
   }
 

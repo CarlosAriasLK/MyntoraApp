@@ -1,10 +1,8 @@
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myntora_app/features/auth/infrastructure/errors/errors.dart';
 import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myntora_app/features/fichas/domain/domain.dart';
 import 'package:myntora_app/features/fichas/infrastructure/infrastructure.dart';
-import 'package:myntora_app/features/fichas/presentation/presentation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 
@@ -18,8 +16,8 @@ class Fichas extends _$Fichas {
   @override
   FichasState build() {
     final authState = ref.watch( authProvider );
-
     token = authState.user?.token ?? 'no-token';
+
     repositoryImpl = FichasRepositoryImpl();
 
     showFichas();
@@ -76,8 +74,8 @@ class Fichas extends _$Fichas {
 
 class FichasState {
 
-  final bool isLoading;
   final List<Ficha>? fichas;
+  final bool isLoading;
   final String errorMessage;
 
   FichasState({

@@ -82,6 +82,7 @@ class CustomModalState extends ConsumerState<CustomModal> {
     },);
 
     return Dialog(
+      backgroundColor: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
