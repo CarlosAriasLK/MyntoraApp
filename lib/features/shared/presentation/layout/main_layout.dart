@@ -4,19 +4,17 @@ import 'package:go_router/go_router.dart';
 import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myntora_app/features/shared/presentation/providers/theme_provider.dart';
 
-class MainLayout extends ConsumerStatefulWidget {
+class MainLayout extends ConsumerWidget {
+
   final Widget child;
   const MainLayout({super.key, required this.child});
 
   @override
-  MainLayoutState createState() => MainLayoutState();
-}
-
-class MainLayoutState extends ConsumerState<MainLayout> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
 
     final size = MediaQuery.of(context).size;
+    final isDarkMode = ref.watch( themeProvider );
+    final user = ref.watch( authProvider ); 
 
     return Scaffold(
       appBar: AppBar(
@@ -24,11 +22,12 @@ class MainLayoutState extends ConsumerState<MainLayout> {
         actions: [
           IconButton(
             icon: Icon(
-              ref.watch( themeProvider ) ? Icons.wb_sunny : Icons.nightlight_round,
+              isDarkMode ? Icons.wb_sunny : Icons.nightlight_round,
             ),
             onPressed: () {
               ref.read( themeProvider.notifier ).changeTheme();
             },
+            
           ),
         ],
       ),
@@ -130,8 +129,8 @@ class MainLayoutState extends ConsumerState<MainLayout> {
                 ],
                 child: ListTile(
                   leading: Icon(Icons.person),
-                  title: Text("Yuly Saenz"),
-                  subtitle: Text("yuly@sena.edu.co"),
+                  title: Text(user.user?.nombre ?? 'Usuario'),
+                  subtitle: Text(user.user?.rol ?? 'Rol' ),
                   trailing: Icon(Icons.arrow_drop_down),
                 ),
               ),
@@ -141,7 +140,7 @@ class MainLayoutState extends ConsumerState<MainLayout> {
         ),
       ),
 
-      body: widget.child,
+      body: child,
 
     );
   }

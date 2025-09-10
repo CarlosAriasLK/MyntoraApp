@@ -6,9 +6,10 @@ import 'package:myntora_app/features/auth/presentation/providers/auth_provider.d
 import 'package:myntora_app/features/auth/presentation/screens/check_auth_status.dart';
 
 import 'package:myntora_app/features/fichas/presentation/screens/fichas_screen.dart';
+import 'package:myntora_app/features/juicios/presentation/screens/aprendices_screen.dart';
+import 'package:myntora_app/features/juicios/presentation/screens/juicios_screen.dart';
 
 import 'package:myntora_app/features/myntora/myntora.dart';
-import 'package:myntora_app/features/myntora/presentation/screens/juicios_evaluativos_screen.dart';
 import 'package:myntora_app/features/programas/presentation/presentation.dart';
 import 'package:myntora_app/features/shared/presentation/layout/main_layout.dart';
 import 'package:myntora_app/features/usuarios/presentation/screens/usuarios_screen.dart';
@@ -60,11 +61,19 @@ GoRouter goRouter(Ref ref) {
             ),
             GoRoute(
               path: '/juicios',
-              builder: (context, state) => JuiciosEvaluativosScreen(),
+              builder: (context, state) => JuiciosScreen(),
             ),
             GoRoute(
               path: '/usuarios',
               builder: (context, state) => UsuariosScreen(),
+            ),
+            GoRoute(
+              path: '/aprendices/:id',
+              builder: (context, state) {
+                final idFicha = int.parse( state.pathParameters['id'] ?? 'no-id' );
+                return AprendicesScreen( idFicha: idFicha, );
+
+              },
             ),
           ]
       )

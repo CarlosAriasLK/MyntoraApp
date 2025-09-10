@@ -1,11 +1,10 @@
 
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'theme_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class Theme extends _$Theme {
   @override
   bool build() {
