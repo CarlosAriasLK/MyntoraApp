@@ -1,5 +1,7 @@
 
 
+import 'dart:io';
+
 import 'package:myntora_app/features/auth/infrastructure/errors/errors.dart';
 import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myntora_app/features/programas/domain/domain.dart';
@@ -42,6 +44,23 @@ class Programas extends _$Programas {
       throw Exception('Error: $e');
     } catch (e) {
       state = state.copyWith( errorMessage: 'Error al cargar programas' );
+      throw Exception('Error: $e');
+    }
+
+  }
+
+
+  Future<void> createProgramas( String nombrePrograma, String nivelPrograma, File competenciasyresultados  ) async {
+
+    try {
+      await programaRepository.createPrograma(token, nombrePrograma, nivelPrograma, competenciasyresultados);
+      getProgramas();
+      
+    } on CustomError catch(e) {
+      state = state.copyWith(errorMessage: e.errorMessage, isLoading: false);
+      throw Exception('Error: $e');
+    } catch (e) {
+      state = state.copyWith(errorMessage: 'Error no controlado', isLoading: false);
       throw Exception('Error: $e');
     }
 

@@ -1,8 +1,6 @@
 
 
-
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'key_value_storage.dart';
 
 class KeyValueStorageImpl extends KeyValueStorage {
@@ -22,7 +20,7 @@ class KeyValueStorageImpl extends KeyValueStorage {
   @override
   Future<bool> removeKey(String key) async{
     final prefs = await SharedPreferences.getInstance();
-    return await prefs.remove(key);
+    return prefs.remove(key);
   }
 
 }

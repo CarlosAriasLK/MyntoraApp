@@ -1,5 +1,7 @@
 
 
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:myntora_app/config/constants/environment.dart';
 import 'package:myntora_app/features/auth/infrastructure/errors/errors.dart';
@@ -24,16 +26,53 @@ class ProgramaDatasourceImpl extends ProgramaDatasource {
       );
 
       final programas = ProgramasMapper.jsonListToEntity( response.data['programas'] );
-
       return programas;
 
     } on DioException catch (e) {
       if( e.response?.statusCode == 401 ){
         CustomError('Token no valido');
       }
-      throw Exception();
+      throw Exception("Error: $e");
+    } catch (e) {
+      throw Exception("Error: $e");
     }
 
+  }
+  
+  @override
+  Future<void> createPrograma(String token, String nombrePrograma, String nivelPrograma, File competenciasyresultados ) async{
+    try {
+
+      final formData = FormData.fromMap({
+        'nombre_programa': nombrePrograma,
+        'nivel': nivelPrograma,
+        'competenciasyresultados': await MultipartFile.fromFile(
+          competenciasyresultados.path,
+          filename: competenciasyresultados.path.split('/').last,
+        ),
+      });
+      
+      await dio.post('/myntora/nuevoprograma', 
+        data: formData,
+        options: Options(
+          headers: {
+            'x-token': token,
+            'Content-Type': 'multipart/form-data'
+          }
+        )
+      );
+
+    } on DioException catch(e) {
+      if( e.response?.statusCode == 400) {
+        throw CustomError('Datos invalidos');
+      }
+      if( e.response?.statusCode == 401 ){
+        throw CustomError('Token no valido');
+      }
+      throw Exception("Error: $e");
+    } catch (e) {
+      throw Exception("Error: $e");
+    }
   }
   
 }
