@@ -10,12 +10,26 @@ import 'package:myntora_app/features/fichas/presentation/widgets/custom_editing_
 class FichasScreen extends ConsumerWidget {
   const FichasScreen({super.key});
 
+
+    void showSnackbar( BuildContext context, String errorMessage ) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage))
+      );
+    }
+
+
     @override
     Widget build(BuildContext context, ref) {
 
     final fichasState = ref.watch( fichasProvider );
     if ( fichasState.isLoading ) return Center(child: CircularProgressIndicator(),);
-    if (fichasState.errorMessage.isNotEmpty) return Center(child: Text('Error: ${fichasState.errorMessage}'));
+
+    ref.listen(fichasProvider, (previous, next) {
+      if( next.errorMessage.isNotEmpty ) {
+        showSnackbar( context, next.errorMessage );
+      }
+    },);
 
     final fichas = fichasState.fichas ?? [];
 

@@ -6,7 +6,9 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:myntora_app/features/fichas/domain/domain.dart';
 import 'package:myntora_app/features/fichas/presentation/presentation.dart';
+import 'package:myntora_app/features/programas/presentation/providers/programa_provider.dart';
 import 'package:myntora_app/features/shared/infrastructure/services/file_picker.dart';
+import 'package:date_field/date_field.dart';
 
 class CustomCreatingModal extends ConsumerStatefulWidget {
   const CustomCreatingModal({super.key});
@@ -16,16 +18,18 @@ class CustomCreatingModal extends ConsumerStatefulWidget {
 
 class CustomCreatingModalState extends ConsumerState<CustomCreatingModal> {
 
-  final idFichaController = TextEditingController();
-  final idProgramaController = TextEditingController();
-  final jornadaController = TextEditingController();
-  final inicioController = TextEditingController();
-  final finController = TextEditingController();
-  final modalidadController = TextEditingController();
-  final etapaController = TextEditingController();
-  final jefeController = TextEditingController();
-  final ofertaController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final idFichaController = TextEditingController();
+  final jefeController = TextEditingController();
+
+  String? idProgramaController;
+  String? jornadaController;
+  String? modalidadController;
+  String? etapaController;
+  String? ofertaController;
+
+  DateTime? inicioController;
+  DateTime? finController;
 
   final fileAdapter = FilePickerAdapter();
   File? _selectedFile;
@@ -43,12 +47,24 @@ class CustomCreatingModalState extends ConsumerState<CustomCreatingModal> {
 
   @override
   Widget build(BuildContext context) {
+
+
+    final programasState = ref.watch(programasProvider);
+
+    final idProgramas = programasState.programas?.map((programa) {
+      return DropdownMenuItem(
+        value: programa.id.toString(),
+        child: Text(programa.nombre, style: TextStyle(fontSize: 16),)
+      );
+    }).toList() ?? [];
+    
+
     final size = MediaQuery.of(context).size;
 
     return Dialog(
       backgroundColor: Colors.white,
       child: SizedBox(
-        height: size.height * 0.8,
+        height: size.height * 0.9,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: SingleChildScrollView(
@@ -68,9 +84,9 @@ class CustomCreatingModalState extends ConsumerState<CustomCreatingModal> {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: TextFormField(
-                          controller: idProgramaController,
+                          controller: idFichaController,
                           decoration: InputDecoration(
-                              labelText: 'Programa de formación',
+                              labelText: 'Numero de Ficha',
                               border: OutlineInputBorder(),
                           ),
                           validator: (value) {
@@ -81,19 +97,76 @@ class CustomCreatingModalState extends ConsumerState<CustomCreatingModal> {
                           },
                         ),
                       ),
-                    
+                      
+
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: CustomDropdown(
+                          selectedItem: idProgramaController,
+                          items: idProgramas, 
+                          hintText: 'Programa de Formacion',
+                          onChanged: (value) {
+                            setState(() {
+                              idProgramaController = value;
+                            });
+                          },
+                        )
+                      ),
                       
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
-                        child: TextFormField(
-                          controller: jornadaController,
-                          decoration: InputDecoration(
-                              labelText: 'Jornada',
-                              border: OutlineInputBorder()
+                        child: CustomDropdown(
+                          selectedItem: jornadaController,
+                          hintText: 'Jornada',
+                          items: [
+                            DropdownMenuItem(value: 'Diurna', child: Text('Diurna', style: TextStyle(fontSize: 16),)),
+                            DropdownMenuItem(value: 'Tarde', child: Text('Tarde', style: TextStyle(fontSize: 16))),
+                            DropdownMenuItem(value: 'Noche', child: Text('Noche', style: TextStyle(fontSize: 16))),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              jornadaController = value;
+                            });
+                          },
+                        ),
+                      ),
+
+
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: DateTimeFormField(
+                          mode: DateTimeFieldPickerMode.date,
+                          style: TextStyle(fontSize: 16, color: Colors.black),
+                          decoration: const InputDecoration(
+                            labelText: 'Fecha inicio',
                           ),
+                          onChanged: (DateTime? value) {
+                            inicioController = value;
+                          },
                           validator: (value) {
-                            if(value == null || value.isEmpty ) {
-                              return 'El campo es requerido';
+                            if( value == null  ) {
+                              return 'El campo es requeridio';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: DateTimeFormField(
+                          mode: DateTimeFieldPickerMode.date,
+
+                          style: TextStyle(fontSize: 16, color: Colors.black),
+                          decoration: const InputDecoration(
+                            labelText: 'Fecha Fin',
+                          ),
+                          onChanged: (DateTime? value) {
+                            finController = value;
+                          },
+                          validator: (value) {
+                            if( value == null  ) {
+                              return 'El campo es requeridio';
                             }
                             return null;
                           },
@@ -103,73 +176,37 @@ class CustomCreatingModalState extends ConsumerState<CustomCreatingModal> {
                       
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
-                        child: TextFormField(
-                          controller: inicioController,
-                          decoration: InputDecoration(
-                              labelText: 'Fecha inicio',
-                              border: OutlineInputBorder()
-                          ),
-                          validator: (value) {
-                            if(value == null || value.isEmpty ) {
-                              return 'El campo es requerido';
-                            }
-                            return null;
+                        child: CustomDropdown(
+                          selectedItem: modalidadController,
+                          hintText: 'Modalidad',
+                          items: [
+                            DropdownMenuItem(value: 'Presencial', child: Text('Presencial', style: TextStyle(fontSize: 16),)),
+                            DropdownMenuItem(value: 'Virtual', child: Text('Virtual', style: TextStyle(fontSize: 16))),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              modalidadController = value;
+                            });
                           },
-                        ),
+                        )
                       ),
                     
                       
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
-                        child: TextFormField(
-                          controller: finController,
-                          decoration: InputDecoration(
-                              labelText: 'Fecha fin',
-                              border: OutlineInputBorder()
-                          ),
-                          validator: (value) {
-                            if(value == null || value.isEmpty ) {
-                              return 'El campo es requerido';
-                            }
-                            return null;
+                        child: CustomDropdown(
+                          selectedItem: etapaController,
+                          hintText: 'Etapa',
+                          items: [
+                            DropdownMenuItem(value: 'Lectiva', child: Text('Lectiva', style: TextStyle(fontSize: 16),)),
+                            DropdownMenuItem(value: 'Productiva', child: Text('Productiva', style: TextStyle(fontSize: 16))),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              etapaController = value;
+                            });
                           },
-                        ),
-                      ),
-                    
-                      
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: TextFormField(
-                          controller: modalidadController,
-                          decoration: InputDecoration(
-                              labelText: 'Modalidad',
-                              border: OutlineInputBorder()
-                          ),
-                          validator: (value) {
-                            if(value == null || value.isEmpty ) {
-                              return 'El campo es requerido';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    
-                      
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: TextFormField(
-                          controller: etapaController,
-                          decoration: InputDecoration(
-                              labelText: 'Etapa',
-                              border: OutlineInputBorder()
-                          ),
-                          validator: (value) {
-                            if(value == null || value.isEmpty ) {
-                              return 'El campo es requerido';
-                            }
-                            return null;
-                          },
-                        ),
+                        )
                       ),
                     
                       
@@ -193,19 +230,19 @@ class CustomCreatingModalState extends ConsumerState<CustomCreatingModal> {
                       
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
-                        child: TextFormField(
-                          controller: ofertaController,
-                          decoration: InputDecoration(
-                              labelText: 'Oferta',
-                              border: OutlineInputBorder()
-                          ),
-                          validator: (value) {
-                            if(value == null || value.isEmpty ) {
-                              return 'El campo es requerido';
-                            }
-                            return null;
+                        child: CustomDropdown(
+                          selectedItem: ofertaController,
+                          hintText: 'Oferta',
+                          items: [
+                            DropdownMenuItem(value: 'Cerrada', child: Text('Cerrada', style: TextStyle(fontSize: 16),)),
+                            DropdownMenuItem(value: 'Abierta', child: Text('Abierta', style: TextStyle(fontSize: 16))),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              ofertaController = value;
+                            });
                           },
-                        ),
+                        )
                       ),
             
                       Padding(
@@ -230,16 +267,16 @@ class CustomCreatingModalState extends ConsumerState<CustomCreatingModal> {
                             : (){
                               final nuevaFicha = Ficha(
                                 id: int.tryParse( idFichaController.text ) ?? 0,
-                                idProgramaFormacion: int.tryParse(idProgramaController.text) ?? 0,
-                                jornada: jornadaController.text,
-                                fechaInicio: DateTime.tryParse(inicioController.text) ?? DateTime.now(),
-                                fechaFin: DateTime.tryParse(finController.text) ?? DateTime.now(),
-                                modalidad: modalidadController.text,
-                                etapa: etapaController.text,
+                                idProgramaFormacion: int.tryParse(idProgramaController ?? '') ?? 0,
+                                jornada: jornadaController ?? '',
+                                fechaInicio: inicioController ?? DateTime.now(),
+                                fechaFin: finController ?? DateTime.now(),
+                                modalidad: modalidadController ?? '',
+                                etapa: etapaController ?? '',
                                 jefeFicha: jefeController.text,
-                                oferta: ofertaController.text,
+                                oferta: ofertaController ?? '',
                               );
-            
+
                               if( _formKey.currentState!.validate() ){
                                 ref.read( fichasProvider.notifier ).createFicha(nuevaFicha, _selectedFile!);
                                 context.pop();
@@ -255,6 +292,56 @@ class CustomCreatingModalState extends ConsumerState<CustomCreatingModal> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+
+
+class CustomDropdown extends StatefulWidget {
+  final List<DropdownMenuItem<String>> items;
+  final String? selectedItem;
+  final String hintText;
+  final ValueChanged<String?> onChanged;
+
+  const CustomDropdown({
+    super.key, 
+    required this.items, 
+    required this.hintText, 
+    this.selectedItem, 
+    required this.onChanged,
+  });
+
+  @override
+  State<CustomDropdown> createState() => _CustomDropdownState();
+}
+
+class _CustomDropdownState extends State<CustomDropdown> {
+  String? _selectedValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedValue = widget.selectedItem;
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return SizedBox(
+      width: size.width * 1,
+      child: DropdownButton(
+        isExpanded: true,
+        hint: Text(widget.hintText, style: TextStyle(fontSize: 16)),
+        items: widget.items, 
+        value: _selectedValue,
+        onChanged: (String? value) {
+          setState(() {
+            _selectedValue = value;
+          });
+          widget.onChanged(value);
+        },
       ),
     );
   }

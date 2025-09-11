@@ -97,7 +97,7 @@ class FichasDatasourceImpl extends FichasDatasource{
         options: Options(
           headers: {
             'x-token': token,
-            'Content/Type': 'multipart/form-data'
+            'Content-Type': 'multipart/form-data'
           }    
         )
       );

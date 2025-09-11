@@ -10,7 +10,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'programa_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class Programas extends _$Programas {
 
   late final ProgramaRepository programaRepository;
@@ -51,7 +51,7 @@ class Programas extends _$Programas {
 
 
   Future<void> createProgramas( String nombrePrograma, String nivelPrograma, File competenciasyresultados  ) async {
-    
+    state = state.copyWith(isLoading: true);
     try {
       await programaRepository.createPrograma(token, nombrePrograma, nivelPrograma, competenciasyresultados);
       getProgramas();

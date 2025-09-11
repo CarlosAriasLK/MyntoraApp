@@ -10,7 +10,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'user_provider.g.dart';
 
 
-@riverpod
+@Riverpod(keepAlive: true)
 class UsuarioProvider extends _$UsuarioProvider {
 
   late final String token;

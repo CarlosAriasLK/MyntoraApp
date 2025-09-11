@@ -10,7 +10,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'fichas_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class Fichas extends _$Fichas {
   late final String token;
   late final FichasRepository repositoryImpl;
@@ -76,14 +76,14 @@ class Fichas extends _$Fichas {
 
 
   Future<void> createFicha( Ficha ficha, File aprendices ) async{
-
+    state = state.copyWith(isLoading: true);
     try {
       await repositoryImpl.createFicha(token, ficha, aprendices);
       showFichas();
 
     } on CustomError catch (e) {
       state = state.copyWith(errorMessage: e.errorMessage, isLoading: false);
-      throw Exception('Error: $e');
+      throw Exception('Error: ${e.errorMessage}');
     } catch (e) {
       throw Exception('Error: $e');
     }

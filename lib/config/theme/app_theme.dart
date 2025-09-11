@@ -35,6 +35,11 @@ class AppTheme {
       color: scaffoldBackgroundColor,
       titleTextStyle: GoogleFonts.inter()
         .copyWith( fontSize: 25, fontWeight: FontWeight.bold, color: Colors.black ),
+    ),
+
+    snackBarTheme: SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      insetPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 10)
     )
 
   );
