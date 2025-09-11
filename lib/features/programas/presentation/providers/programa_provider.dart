@@ -28,7 +28,7 @@ class Programas extends _$Programas {
   }
 
   Future<List<Programa>> getProgramas() async{
-
+    
     try {
       final programas = await programaRepository.getProgramas(token);
       state = state.copyWith(
@@ -40,10 +40,10 @@ class Programas extends _$Programas {
       return programas;
 
     } on CustomError catch (e) {
-      state = state.copyWith( errorMessage: e.errorMessage );
+      state = state.copyWith( errorMessage: e.errorMessage, isLoading: false );
       throw Exception('Error: $e');
     } catch (e) {
-      state = state.copyWith( errorMessage: 'Error al cargar programas' );
+      state = state.copyWith( errorMessage: 'Error al cargar programas', isLoading: false );
       throw Exception('Error: $e');
     }
 
@@ -51,14 +51,14 @@ class Programas extends _$Programas {
 
 
   Future<void> createProgramas( String nombrePrograma, String nivelPrograma, File competenciasyresultados  ) async {
-
+    
     try {
       await programaRepository.createPrograma(token, nombrePrograma, nivelPrograma, competenciasyresultados);
       getProgramas();
       
     } on CustomError catch(e) {
       state = state.copyWith(errorMessage: e.errorMessage, isLoading: false);
-      throw Exception('Error: $e');
+      throw Exception('Error: ${e.errorMessage}');
     } catch (e) {
       state = state.copyWith(errorMessage: 'Error no controlado', isLoading: false);
       throw Exception('Error: $e');

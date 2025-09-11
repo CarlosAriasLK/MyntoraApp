@@ -30,7 +30,7 @@ class ProgramaDatasourceImpl extends ProgramaDatasource {
 
     } on DioException catch (e) {
       if( e.response?.statusCode == 401 ){
-        CustomError('Token no valido');
+        throw CustomError('No permitido');
       }
       throw Exception("Error: $e");
     } catch (e) {
@@ -67,7 +67,7 @@ class ProgramaDatasourceImpl extends ProgramaDatasource {
         throw CustomError('Datos invalidos');
       }
       if( e.response?.statusCode == 401 ){
-        throw CustomError('Token no valido');
+        throw CustomError('No permitido');
       }
       throw Exception("Error: $e");
     } catch (e) {

@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:myntora_app/features/fichas/domain/domain.dart';
 import 'package:myntora_app/features/fichas/presentation/providers/fichas_provider.dart';
-import 'package:myntora_app/features/fichas/presentation/widgets/custom_modal.dart';
+import 'package:myntora_app/features/fichas/presentation/widgets/custom_creating_modal.dart';
+import 'package:myntora_app/features/fichas/presentation/widgets/custom_editing_modal.dart';
 
 
 class FichasScreen extends ConsumerWidget {
@@ -13,14 +14,8 @@ class FichasScreen extends ConsumerWidget {
     Widget build(BuildContext context, ref) {
 
     final fichasState = ref.watch( fichasProvider );
-
-    if ( fichasState.isLoading ) {
-      return Center(child: CircularProgressIndicator(),);
-    }
-
-    if (fichasState.errorMessage.isNotEmpty) {
-      return Center(child: Text('Error: ${fichasState.errorMessage}'));
-    }
+    if ( fichasState.isLoading ) return Center(child: CircularProgressIndicator(),);
+    if (fichasState.errorMessage.isNotEmpty) return Center(child: Text('Error: ${fichasState.errorMessage}'));
 
     final fichas = fichasState.fichas ?? [];
 
@@ -34,7 +29,12 @@ class FichasScreen extends ConsumerWidget {
           Padding(
             padding: EdgeInsetsGeometry.symmetric(horizontal: 15, vertical: 10),
             child: FilledButton(
-              onPressed: (){}, 
+              onPressed: (){
+                showDialog(
+                  context: context, 
+                  builder: (context) => CustomCreatingModal(),
+                );
+              }, 
               style: ButtonStyle(
                 shape: WidgetStatePropertyAll(
                   RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(7))
@@ -108,7 +108,7 @@ class _CustomDateTable extends ConsumerWidget {
                       showDialog(
                         context: context,
                         builder: (context) {
-                          return CustomModal( ficha: ficha, );
+                          return CustomEditingModal( ficha: ficha, );
                         },
                       );
                     },
@@ -130,3 +130,7 @@ class _CustomDateTable extends ConsumerWidget {
     );
   }
 }
+
+
+
+

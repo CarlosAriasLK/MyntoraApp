@@ -11,12 +11,24 @@ import 'package:myntora_app/features/shared/infrastructure/services/file_picker.
 class ProgramasScreen extends ConsumerWidget {
   const ProgramasScreen({super.key});
 
+  void showSnackBar( BuildContext context, String errorMessage ) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(errorMessage))
+    );
+  }
+
   @override
   Widget build(BuildContext context, ref) {
 
     final programaState = ref.watch( programasProvider );
     if( programaState.isLoading ) return Center(child: CircularProgressIndicator());
-    if( programaState.errorMessage.isNotEmpty ) return Center(child: Text('Error: ${programaState.errorMessage}'),);
+    
+    ref.listen(programasProvider, (previous, next) {
+      if( next.errorMessage.isNotEmpty ) {
+        showSnackBar( context, next.errorMessage );
+      }
+    },);
 
 
     final programas = programaState.programas ?? [];
@@ -129,7 +141,11 @@ class _CustomLoadProgramas extends ConsumerStatefulWidget {
 
 class _CustomLoadProgramasState extends ConsumerState<_CustomLoadProgramas> {
   final fileAdapter = FilePickerAdapter();
+  final nombreController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  
   File? selectedFile;
+  String dropdownValue = list.first;
 
   Future<void> _pickFile() async {
     final file = await fileAdapter.pickFile();
@@ -140,32 +156,21 @@ class _CustomLoadProgramasState extends ConsumerState<_CustomLoadProgramas> {
     }
   }
 
-  final nombreController = TextEditingController();
-  String dropdownValue = list.first;
-
-  void showSnackBar( BuildContext context, String errorMessage ) {
-    showSnackBar(context, errorMessage);
-  }
-
   @override
   Widget build(BuildContext context) {
 
     final size = MediaQuery.of(context).size;
-
-    ref.listen(programasProvider, (previous, next) {
-      if( next.errorMessage.isNotEmpty ) {
-        showSnackBar( context, next.errorMessage );
-      }
-    },);
+    final programasStatus = ref.watch( programasProvider );
 
     return Dialog(
       child: SizedBox(
-        height: size.height * 0.5,
+        height: size.height * 0.4,
         child: Padding(
           padding: EdgeInsetsGeometry.symmetric(horizontal: 20, vertical: 10),
           child: Form(
+            key: _formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              
               
               children: [
 
@@ -173,7 +178,7 @@ class _CustomLoadProgramasState extends ConsumerState<_CustomLoadProgramas> {
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   child: Align( 
                     alignment: Alignment.center, 
-                    child: Text('Crear programa de formacion', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)
+                    child: Text('Crear Programa de Formacion', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)
                   ),
                 ),
 
@@ -185,6 +190,12 @@ class _CustomLoadProgramasState extends ConsumerState<_CustomLoadProgramas> {
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(7)),
                       label: Text('Nombre del Programa')
                     ),
+                    validator: (value) {
+                      if( value == null || value.isEmpty ) {
+                        return 'El nombre es obligatorio';
+                      }
+                      return null;
+                    },
                   ),
                 ),
 
@@ -232,13 +243,18 @@ class _CustomLoadProgramasState extends ConsumerState<_CustomLoadProgramas> {
                   alignment: Alignment.centerRight,
                   child: FilledButton(
                     style: ButtonStyle( shape: WidgetStatePropertyAll( RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(7)) ) ),
-                    onPressed: (){
-                      ref.watch( programasProvider.notifier ).createProgramas( nombreController.text, dropdownValue, selectedFile! );
-                      print('Elementos: ${nombreController.text}, $dropdownValue, ${selectedFile?.path.split('/').last} ');
-                      context.pop();
-                    }, 
-                    child: Text('Cargar Programa'),
-                  ),
+                    onPressed: programasStatus.isLoading == true
+                    ? null
+                    : (){
+                        if( _formKey.currentState!.validate() ){
+                          ref.watch( programasProvider.notifier ).createProgramas( nombreController.text, dropdownValue, selectedFile! );
+                          context.pop();
+                        }
+                      }, 
+                      child: programasStatus.isLoading
+                        ? const CircularProgressIndicator( strokeWidth: 2, color: Colors.white, )
+                        : const Text("Cargar Programa"),
+                    ),
                 ),
 
               ],

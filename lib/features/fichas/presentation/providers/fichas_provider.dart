@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:myntora_app/features/auth/infrastructure/errors/errors.dart';
 import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myntora_app/features/fichas/domain/domain.dart';
@@ -66,9 +68,28 @@ class Fichas extends _$Fichas {
     } on CustomError catch (e) {
       state = state.copyWith(errorMessage: e.errorMessage, isLoading: false);
       throw Exception('Error: $e');
+    } catch (e) {
+      throw Exception('Error: $e');
     }
 
   }
+
+
+  Future<void> createFicha( Ficha ficha, File aprendices ) async{
+
+    try {
+      await repositoryImpl.createFicha(token, ficha, aprendices);
+      showFichas();
+
+    } on CustomError catch (e) {
+      state = state.copyWith(errorMessage: e.errorMessage, isLoading: false);
+      throw Exception('Error: $e');
+    } catch (e) {
+      throw Exception('Error: $e');
+    }
+
+  }
+
 }
 
 

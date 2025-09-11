@@ -1,5 +1,7 @@
 
 
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:myntora_app/config/constants/environment.dart';
@@ -61,10 +63,58 @@ class FichasDatasourceImpl extends FichasDatasource{
       if( e.response?.statusCode == 400 ) {
         throw CustomError('Datos inválidos');
       }
+      if( e.response?.statusCode == 401 ){
+        throw CustomError('No permitido');
+      }
       throw Exception();
     } catch (e) {
       throw Exception('Error actualizando ficha: $e');
     }
+  }
+
+  @override
+  Future<void> createFicha(String token, Ficha ficha, File aprendices) async{
+    try {
+      
+      final formData = FormData.fromMap({
+        'id': ficha.id,
+        'id_programa_formacion': ficha.idProgramaFormacion,
+        'jornada': ficha.jornada,
+        'fecha_inicio': ficha.fechaInicio,
+        'fecha_fin': ficha.fechaFin,
+        'modalidad': ficha.modalidad,
+        'etapa': ficha.etapa,
+        'jefe_ficha': ficha.jefeFicha,
+        'oferta': ficha.oferta,
+        'aprendices': await MultipartFile.fromFile(
+          aprendices.path,
+          filename: aprendices.path.split('/').last,
+        ),
+      });
+
+      await dio.post('/myntora/nuevaficha',
+        data: formData,
+        options: Options(
+          headers: {
+            'x-token': token,
+            'Content/Type': 'multipart/form-data'
+          }    
+        )
+      );
+
+    } on DioException catch(e) {
+      
+      if( e.response?.statusCode == 400 ) {
+        throw CustomError('Datos inválidos');
+      }
+      if( e.response?.statusCode == 401 ){
+        throw CustomError('No permitido');
+      }
+      throw Exception('Error: $e');
+    } catch (e) {
+      throw Exception('Error: $e');
+    }
+    
   }
 
 }
