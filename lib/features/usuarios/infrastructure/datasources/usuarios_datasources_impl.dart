@@ -17,7 +17,6 @@ class UsuariosDatasourcesImpl implements UsuariosDatasources {
     try {
       
       final response = await dio.get('/myntora/actualizarusuario/$uid', options: Options( headers: { 'x-token': token } ) );
-
       return UsuarioMapper.responseToEntity( response.data['usuario'] );
 
     } on DioException catch(e) {
@@ -60,7 +59,6 @@ class UsuariosDatasourcesImpl implements UsuariosDatasources {
         data: {
           'nombre': usuario.nombre,
           'apellido': usuario.apellido,
-          'password': usuario.password,
           'tipo_documento': usuario.tipoDocumento,
           'nro_documento': usuario.nroDocumento,
           'correo_institucional': usuario.correoInstitucional,
@@ -94,6 +92,47 @@ class UsuariosDatasourcesImpl implements UsuariosDatasources {
 
     }
     catch (e) {
+      throw Exception("Error: $e");
+    }
+
+  }
+  
+  @override
+  Future<void> createUsuario(String token, Usuario usuario) async{
+    
+    try {
+      
+      await dio.post('/myntora/nuevousuario',
+        data: {
+          "nombre": usuario.nombre ,
+          "apellido": usuario.apellido,
+          "tipo_documento": usuario.tipoDocumento,
+          "nro_documento": usuario.nroDocumento,
+          "correo_institucional": usuario.correoInstitucional,
+          "telefono": usuario.telefono,
+          "rol": usuario.rol,
+          "tipo_contrato": usuario.tipoContrato,
+          "tipo_rol": usuario.tipoRol,
+          "fecha_inicio_contrato": usuario.fechaInicioContrato,
+          "fecha_fin_contrato": usuario.fechaFinContrato,
+        },
+        options: Options(
+          headers: {
+            'x-token': token
+          }
+        )
+      );
+
+    } on DioException catch(e) {
+      if( e.response?.statusCode == 401 ){
+        throw CustomError('Token no valido');
+      }
+      if( e.response?.statusCode == 400 ){
+        throw CustomError('Datos invalidos');
+      }
+      throw Exception("Error: ${e.message}");
+
+    } catch (e) {
       throw Exception("Error: $e");
     }
 

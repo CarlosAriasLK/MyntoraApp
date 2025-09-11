@@ -3,9 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:multi_dropdown/multi_dropdown.dart';
 import 'package:myntora_app/features/programas/domain/domain.dart';
 import 'package:myntora_app/features/programas/presentation/providers/programa_provider.dart';
 import 'package:myntora_app/features/shared/infrastructure/services/file_picker.dart';
+import 'package:myntora_app/features/shared/widgets/custom_dropdown.dart';
 
 
 class ProgramasScreen extends ConsumerWidget {
@@ -52,11 +55,10 @@ class ProgramasScreen extends ConsumerWidget {
               ),
 
               onPressed: (){
-                showDialog(
+                showMaterialModalBottomSheet(
+                  enableDrag: false,
                   context: context, 
-                  builder: (context) {
-                    return _CustomLoadProgramas();
-                  },
+                  builder: (context) => _CustomLoadProgramas(),
                 );
               }, 
               child: Text('Cargar Programas'),
@@ -85,16 +87,16 @@ class _ProgramasDataTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DataTable(
-
+    
       dividerThickness: 1.2,
-
+    
       border: TableBorder.symmetric(
         inside: BorderSide(color: Colors.grey.shade300, width: 1),
       ),
-
+    
       headingRowColor: WidgetStatePropertyAll( Color.fromARGB(20, 0, 200, 10) ),
       headingTextStyle: const TextStyle( fontWeight: FontWeight.bold, fontSize: 15, ),
-
+    
       
       columns: [
         DataColumn(label: Text('Id')),
@@ -131,8 +133,6 @@ class _ProgramasDataTable extends StatelessWidget {
 }
 
 
-const list = <String>['Técnico', 'Tecnólogo'];
-
 class _CustomLoadProgramas extends ConsumerStatefulWidget {
   const _CustomLoadProgramas();
   @override
@@ -143,10 +143,10 @@ class _CustomLoadProgramasState extends ConsumerState<_CustomLoadProgramas> {
   final fileAdapter = FilePickerAdapter();
   final nombreController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  String? currentValue;
   
   File? selectedFile;
-  String dropdownValue = list.first;
-
   Future<void> _pickFile() async {
     final file = await fileAdapter.pickFile();
     if (file != null) {
@@ -158,110 +158,96 @@ class _CustomLoadProgramasState extends ConsumerState<_CustomLoadProgramas> {
 
   @override
   Widget build(BuildContext context) {
-
     final size = MediaQuery.of(context).size;
-    final programasStatus = ref.watch( programasProvider );
 
-    return Dialog(
-      child: SizedBox(
-        height: size.height * 0.4,
-        child: Padding(
-          padding: EdgeInsetsGeometry.symmetric(horizontal: 20, vertical: 10),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              
-              
-              children: [
+    return Container(
+      height: size.height * 0.6,
+      color: Colors.white,
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Align( 
-                    alignment: Alignment.center, 
-                    child: Text('Crear Programa de Formacion', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)
-                  ),
+      child: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+          
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Align( 
+                  alignment: Alignment.center, 
+                  child: Text('Crear Programa de Formacion', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)
                 ),
-
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 15),
-                  child: TextFormField(
-                    controller: nombreController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(7)),
-                      label: Text('Nombre del Programa')
-                    ),
-                    validator: (value) {
-                      if( value == null || value.isEmpty ) {
-                        return 'El nombre es obligatorio';
-                      }
-                      return null;
-                    },
+              ),
+          
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                child: TextFormField(
+                  controller: nombreController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(7)),
+                    label: Text('Nombre del Programa')
                   ),
+                  validator: (value) {
+                    if( value == null || value.isEmpty ) {
+                      return 'El nombre es obligatorio';
+                    }
+                    return null;
+                  },
                 ),
-
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(width: 0.7),
-                    borderRadius: BorderRadius.circular(7)
-                  ),
-                  width: double.infinity,
-                  child: DropdownButton(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    isExpanded: true,
-                    hint: Text('Nivel programa'),
-                    value: dropdownValue,
-                    style: TextStyle(fontSize: 15, color: Colors.black),
-                    underline: SizedBox(),
-                    onChanged: (String? value) {
-                      setState(() {
-                        dropdownValue = value!;
-                      });
-                    },
-                    items: list.map((String value) {
-                      return DropdownMenuItem<String>(value: value, child: Text(value));
-                    }).toList(),
-                  ),
+              ),
+          
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: CustomDropdown(
+                  hintText: 'Nivel de Programa',
+                  items: [
+                    DropdownItem(label: 'Técnico', value: 'Técnico'),
+                    DropdownItem(label: 'Tecnólogo', value: 'Tecnólogo'),
+                  ], 
+                  onChange: (String? value) { 
+                    setState(() {
+                        currentValue = value;
+                    });
+                  }, 
                 ),
-
-
-                Padding(
+              ),
+          
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: selectedFile != null 
+                  ? Text(selectedFile!.path.split('/').last)
+                  : TextButton.icon(
+                    onPressed: (){
+                      _pickFile();
+                    }, 
+                    label: Text('Competencias y Resultados'),
+                    icon: Icon(Icons.file_download),
+                  ),
+              ),
+          
+              Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: selectedFile != null 
-                    ? Text(selectedFile!.path.split('/').last)
-                    : TextButton.icon(
-                      onPressed: (){
-                        _pickFile();
-                      }, 
-                      label: Text('Competencias y Resultados'),
-                      icon: Icon(Icons.file_download),
-                    ),
-                ),
-
-                Spacer(),
-
-                Align(
-                  alignment: Alignment.centerRight,
                   child: FilledButton(
                     style: ButtonStyle( shape: WidgetStatePropertyAll( RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(7)) ) ),
-                    onPressed: programasStatus.isLoading == true
-                    ? null
-                    : (){
-                        if( _formKey.currentState!.validate() ){
-                          ref.watch( programasProvider.notifier ).createProgramas( nombreController.text, dropdownValue, selectedFile! );
-                          context.pop();
-                        }
-                      }, 
-                      child: programasStatus.isLoading
-                        ? const CircularProgressIndicator( strokeWidth: 2, color: Colors.white, )
-                        : const Text("Cargar Programa"),
-                    ),
+                    onPressed: (){
+                      if( _formKey.currentState!.validate() ){
+                        ref.watch( programasProvider.notifier ).createProgramas( nombreController.text, currentValue!, selectedFile! );
+                        context.pop();
+                      }
+                    }, 
+                    child: const Text("Cargar Programa"),
+                  ),
                 ),
-
-              ],
-            )
-          ),
-        )
+              ),
+          
+            ],
+          )
+        ),
       ),
     );
   }
 }
+
+
+

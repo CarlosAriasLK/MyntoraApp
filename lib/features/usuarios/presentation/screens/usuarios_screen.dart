@@ -3,27 +3,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+
 import 'package:myntora_app/features/usuarios/domain/entities/usuario.dart';
 import 'package:myntora_app/features/usuarios/presentation/providers/user_provider.dart';
+import 'package:myntora_app/features/usuarios/presentation/widgets/creating_user.dart';
 
 class UsuariosScreen extends ConsumerWidget {
   
   const UsuariosScreen({super.key});
 
+  void showSnackBar( BuildContext context, String errorMessage ){
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(errorMessage))
+    );
+  }
+
   @override
   Widget build(BuildContext context, ref) {
 
     final usuariosStatus = ref.watch( usuarioProviderProvider );
-
-    if( usuariosStatus.isLoading ){
-      return Center(child: CircularProgressIndicator(),);
-    }
-
-    if( usuariosStatus.errorMessage.isNotEmpty ){
-      return Center(child: Text('Error ${ usuariosStatus.errorMessage }'),);
-    }
+    if( usuariosStatus.isLoading )return Center(child: CircularProgressIndicator(),);
 
     final usuarios = usuariosStatus.usuarios ?? [];
+
+    ref.listen(usuarioProviderProvider, (previous, next) {
+      if( next.errorMessage.isNotEmpty ) {
+        showSnackBar(context, next.errorMessage);
+      }
+    },);
 
     return Scaffold(
       appBar: AppBar(
@@ -37,7 +46,15 @@ class UsuariosScreen extends ConsumerWidget {
           Padding(
             padding: EdgeInsetsGeometry.symmetric(horizontal: 15, vertical: 10),
             child: FilledButton(
-              onPressed: (){}, 
+              onPressed: (){
+                showMaterialModalBottomSheet(
+                  animationCurve: Curves.easeInOut,
+                  enableDrag: false,
+                  context: context, 
+                  builder: (context) => CreatingUser(),
+                );
+
+              }, 
               style: ButtonStyle(
                 shape: WidgetStatePropertyAll(
                   RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(7))
@@ -83,9 +100,8 @@ class _CustomTableUsers extends ConsumerWidget {
         DataColumn(label: Text('id')),
         DataColumn(label: Text('nombre')),
         DataColumn(label: Text('apellido')),
-        DataColumn(label: Text('tipo_documento')),
-        DataColumn(label: Text('nro_documento')),
-        DataColumn(label: Text('correo_institucional')),
+        DataColumn(label: Text('Rol')),
+        DataColumn(label: Text('Correo')),
         DataColumn(label: Text('telefono')),
         DataColumn(label: Text('Acciones')),
       ], 
@@ -95,8 +111,7 @@ class _CustomTableUsers extends ConsumerWidget {
             DataCell(Text(usuario.id.toString())),
             DataCell(Text(usuario.nombre)),
             DataCell(Text(usuario.apellido)),
-            DataCell(Text(usuario.tipoDocumento)),
-            DataCell(Text(usuario.nroDocumento.toString())),
+            DataCell(Text(usuario.rol)),
             DataCell(Text(usuario.correoInstitucional)),
             DataCell(Text(usuario.telefono.toString())),
             DataCell(
@@ -179,11 +194,11 @@ class _ModalUser extends StatelessWidget {
               subtitle: Text('Tipo de Rol'),
             ),
             ListTile(
-              title: Text(formater.format(usuario.fechaInicioContrato)),
+              title: Text(/* formater.format( */usuario.fechaInicioContrato/* ) */),
               subtitle: Text('Fecha inicio del contrato'),
             ),
             ListTile(
-              title: Text(formater.format(usuario.fechaInicioContrato)),
+              title: Text(/* formater.format( */usuario.fechaInicioContrato/* ) */),
               subtitle: Text('Fecha fin del contrato'),
             ),
             ListTile(

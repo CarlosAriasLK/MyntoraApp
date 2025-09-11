@@ -28,7 +28,7 @@ class Auth extends _$Auth {
 
     try {
       final user = await repositoryImpl.login(email, password);
-      await keyValueStorage.setKeyValue('token', user.token);
+      await keyValueStorage.setKeyValue('token', user.token );
 
       state = state.copyWith(
         authStatus: AuthStatus.authenticated,

@@ -28,4 +28,9 @@ class UsuariosRepositoriesImpl implements UsuariosRepositories {
   Future<Usuario> updateUsuario(String token, Usuario usuario) {
     return datasources.updateUsuario(token, usuario);
   }
+  
+  @override
+  Future<void> createUsuario(String token, Usuario usuario) {
+    return datasources.createUsuario(token, usuario);
+  }
 }

@@ -27,11 +27,27 @@ class UsuarioProvider extends _$UsuarioProvider {
     return UserStatus();
   }
 
+  Future<void> createUser( Usuario usuario ) async {
+    state = state.copyWith( isLoading: true );
+    try {
+
+      await repositoryImpl.createUsuario(token, usuario);
+      getAllUsers();
+
+    } on CustomError catch(e) {
+      state = state.copyWith(errorMessage: e.errorMessage, isLoading: false);
+      throw Exception("Error: ${e.errorMessage}");
+    } catch (e) {
+      state = state.copyWith(errorMessage: '$e', isLoading: false);
+      throw Exception("Error: $e");
+    }
+
+  }
+
 
   Future<List<Usuario>> getAllUsers() async{
 
     try {
-      
       final allUsers = await repositoryImpl.getUsuarios( token );
 
       state = state.copyWith(
@@ -56,7 +72,6 @@ class UsuarioProvider extends _$UsuarioProvider {
   Future<Usuario> updateUser( Usuario usuario, int uid ) async{
 
     try {
-      
       final usuarioActalizado = await repositoryImpl.updateUsuario( token, usuario );
 
       final usuariosActualizados = state.usuarios?.map( (usuario) {
@@ -89,11 +104,10 @@ class UsuarioProvider extends _$UsuarioProvider {
     try {
       
       final usuario = await repositoryImpl.getUsuario(uid, token);
-
       final currentUsuarios = state.usuarios ?? [];
 
       state = state.copyWith(
-        usuarios: [ ...currentUsuarios, usuario ],
+        usuarios: [ usuario, ...currentUsuarios ],
         errorMessage: '',
         isLoading: false,
       );
@@ -109,6 +123,9 @@ class UsuarioProvider extends _$UsuarioProvider {
       throw Exception("Error: $e");
     }
   }
+
+
+  
 
 }
 

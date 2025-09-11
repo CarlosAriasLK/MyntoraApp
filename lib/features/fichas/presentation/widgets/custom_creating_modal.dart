@@ -31,11 +31,10 @@ class CustomCreatingModalState extends ConsumerState<CustomCreatingModal> {
   DateTime? inicioController;
   DateTime? finController;
 
-  final fileAdapter = FilePickerAdapter();
   File? _selectedFile;
 
   Future<void> getFile() async{
-    final file = await fileAdapter.pickFile();
+    final file = await FilePickerAdapter().pickFile();
     if( file != null ) {
       setState(() {
         _selectedFile = file;
@@ -166,7 +165,7 @@ class CustomCreatingModalState extends ConsumerState<CustomCreatingModal> {
                           },
                           validator: (value) {
                             if( value == null  ) {
-                              return 'El campo es requeridio';
+                              return 'El campo es requerido';
                             }
                             return null;
                           },

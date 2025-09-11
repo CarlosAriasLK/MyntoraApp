@@ -11,4 +11,7 @@ abstract class UsuariosRepositories {
   Future<Usuario> getUsuario( int uid, String token );
 
   Future<Usuario> updateUsuario( String token, Usuario usuario );
+
+  Future<void> createUsuario( String token, Usuario usuario );
+  
 }
