@@ -6,7 +6,8 @@ import 'package:myntora_app/features/auth/presentation/providers/auth_provider.d
 import 'package:myntora_app/features/auth/presentation/screens/check_auth_status.dart';
 
 import 'package:myntora_app/features/fichas/presentation/screens/fichas_screen.dart';
-import 'package:myntora_app/features/juicios/presentation/screens/aprendices_screen.dart';
+import 'package:myntora_app/features/aprendices/presentation/screens/aprendices_screen.dart';
+import 'package:myntora_app/features/aprendices/presentation/screens/fichas_juicios_screen.dart';
 import 'package:myntora_app/features/juicios/presentation/screens/juicios_screen.dart';
 
 import 'package:myntora_app/features/myntora/myntora.dart';
@@ -46,34 +47,48 @@ GoRouter goRouter(Ref ref) {
           builder: (context, state, child) {
             return MainLayout(child: child);
           },
+          
           routes: [
             GoRoute(
               path: '/home',
               builder: (context, state) => HomeScreen(),
             ),
+
             GoRoute(
               path: '/fichas',
               builder: (context, state) => FichasScreen(),
             ),
+
             GoRoute(
               path: '/programas',
               builder: (context, state) => ProgramasScreen(),
             ),
+
             GoRoute(
               path: '/juicios',
-              builder: (context, state) => JuiciosScreen(),
+              builder: (context, state) => FichasJuiciosScreen(),
+              routes: [
+                GoRoute(
+                  path: 'aprendices/:id',
+                  builder: (context, state) {
+                    final idFicha = int.parse( state.pathParameters['id'] ?? '0' );
+                    return AprendicesScreen( idFicha: idFicha, );
+                  },
+                ),
+
+                GoRoute(
+                  path: 'juicio/:aprendizId',
+                  builder: (context, state) {
+                    final aprendizId = int.parse( state.pathParameters['aprendizId'] ?? '0' );
+                    return JuiciosScreen(aprendizId: aprendizId,);
+                  } ,
+                ),
+              ]
             ),
+
             GoRoute(
               path: '/usuarios',
               builder: (context, state) => UsuariosScreen(),
-            ),
-            GoRoute(
-              path: '/aprendices/:id',
-              builder: (context, state) {
-                final idFicha = int.parse( state.pathParameters['id'] ?? 'no-id' );
-                return AprendicesScreen( idFicha: idFicha, );
-
-              },
             ),
           ]
       )

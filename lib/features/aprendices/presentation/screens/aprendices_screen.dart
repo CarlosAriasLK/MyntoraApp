@@ -2,8 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:myntora_app/features/juicios/domain/entities/aprendiz.dart';
-import 'package:myntora_app/features/juicios/presentation/providers/aprendices_provider.dart';
+import 'package:go_router/go_router.dart';
+import 'package:myntora_app/features/aprendices/domain/entities/aprendiz.dart';
+import 'package:myntora_app/features/aprendices/presentation/providers/aprendices_provider.dart';
 
 class AprendicesScreen extends ConsumerWidget {
   final int idFicha;
@@ -70,7 +71,9 @@ class _CustomAprendicesTable extends StatelessWidget {
                     DataCell(Row(
                       children: [
                         IconButton(
-                          onPressed: (){}, 
+                          onPressed: (){
+                            context.push('/juicios/juicio/${aprendiz.id}');
+                          }, 
                           icon: Icon(Icons.remove_red_eye)
                         )
                       ],

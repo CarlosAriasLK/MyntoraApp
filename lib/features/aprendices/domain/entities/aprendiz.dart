@@ -17,8 +17,7 @@ class Aprendiz {
     required this.apellidos, 
     required this.tipoFocumento, 
     required this.nroDocumento, 
-    required this.estado
+    required this.estado,
   });
-
 
 }

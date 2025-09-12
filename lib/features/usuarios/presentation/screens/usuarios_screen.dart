@@ -97,7 +97,6 @@ class _CustomTableUsers extends ConsumerWidget {
       headingTextStyle: const TextStyle( fontWeight: FontWeight.bold, fontSize: 15, ),
 
       columns: [
-        DataColumn(label: Text('id')),
         DataColumn(label: Text('nombre')),
         DataColumn(label: Text('apellido')),
         DataColumn(label: Text('Rol')),
@@ -108,7 +107,6 @@ class _CustomTableUsers extends ConsumerWidget {
       rows: usuarios.map(( usuario ) {
         return DataRow(
           cells: [
-            DataCell(Text(usuario.id.toString())),
             DataCell(Text(usuario.nombre)),
             DataCell(Text(usuario.apellido)),
             DataCell(Text(usuario.rol)),
@@ -132,13 +130,6 @@ class _CustomTableUsers extends ConsumerWidget {
                     icon: Icon(Icons.edit)
                   ),
 
-                  IconButton(
-                    onPressed: (){
-                      _ModalUser(usuario: usuario,);
-                    }, 
-                    icon: Icon(Icons.delete_forever)
-                  ),
-                  
                 ],
               )
             ),

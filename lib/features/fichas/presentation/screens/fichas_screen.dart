@@ -129,12 +129,6 @@ class _CustomDateTable extends ConsumerWidget {
                     icon: const Icon(Icons.edit),
                   ),
 
-                  IconButton(
-                    onPressed: (){
-                      print(ficha.id.toString());
-                    },
-                    icon: Icon(Icons.delete_forever)
-                  ),
                 ],
               )
             ),

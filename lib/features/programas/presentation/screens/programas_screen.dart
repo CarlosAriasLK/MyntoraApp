@@ -116,10 +116,6 @@ class _ProgramasDataTable extends StatelessWidget {
               children: [
                 IconButton(
                   onPressed: (){}, 
-                  icon: Icon(Icons.remove_red_eye)
-                ),
-                IconButton(
-                  onPressed: (){}, 
                   icon: Icon(Icons.edit)
                 ),
               ],

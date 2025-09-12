@@ -2,87 +2,167 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:myntora_app/features/fichas/domain/entities/ficha.dart';
-import 'package:myntora_app/features/fichas/presentation/presentation.dart';
+import 'package:myntora_app/features/juicios/domain/entities/juicio.dart';
+import 'package:myntora_app/features/juicios/presentation/providers/juicios_provider.dart';
 
 class JuiciosScreen extends ConsumerWidget {
+  final int aprendizId;
+  const JuiciosScreen({super.key, required this.aprendizId});
 
-  const JuiciosScreen({super.key});
+  void showSnackBar(BuildContext context, String errorMessage) {
+    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(errorMessage)),
+    );
+  }
 
   @override
-  Widget build(BuildContext context, ref) {
-    final fichaState = ref.watch( fichasProvider );  
-    if( fichaState.isLoading ) return Center(child: CircularProgressIndicator(),);
-    if( fichaState.errorMessage.isNotEmpty ) return Center(child: Text("Erorr: ${fichaState.errorMessage}"),);
+  Widget build(BuildContext context, WidgetRef ref) {
 
-    final fichas = fichaState.fichas ?? [];
+    final juicioState = ref.watch(juiciosProvider);
+
+    ref.listen(juiciosProvider, (previous, next) {
+      if (next.errorMessage.isNotEmpty) {
+        showSnackBar(context, next.errorMessage);
+      }
+    });
+
+    ref.read(juiciosProvider.notifier).getJuicioById(aprendizId);
+
+    if (juicioState.isLoading) return const Scaffold( body: Center(child: CircularProgressIndicator()), );
+
+    if (juicioState.juicio == null) {
+      return const Scaffold(
+        body: Center(child: Text('No se encontró el juicio')),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Juicios Evaluativos'),
+        title: Text('Juicio Evaluativo'),
       ),
-      body: GridView.builder(
-        itemCount: fichas.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 10
-        ), 
-        itemBuilder: (context, index) {
-          return CustomCard( ficha: fichas[index], );
-        },
+      body: CustomScrollView(
+
+        slivers: [
+
+
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              childCount: 1,
+              (context, index) {
+                
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+
+                    _CustomDetailsCard( juicio: juicioState.juicio!, ),
+
+                    _CustomCompetenciasTable(juicio: juicioState.juicio! ,),
+                  
+                  ],
+                );
+                
+              },
+            )
+          )
+        ],
+
       )
     );
   }
 }
 
-
-class CustomCard extends StatelessWidget {
-  
-  final Ficha ficha;
-
-  const CustomCard({super.key, required this.ficha});
+class _CustomDetailsCard extends StatelessWidget {
+  final Juicio juicio;
+  const _CustomDetailsCard({required this.juicio});
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Padding(
-      padding: EdgeInsetsGeometry.symmetric(horizontal: 7),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Container(
-        
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(7),
-          color: Color.fromARGB(20, 0, 200, 10) 
+        decoration: BoxDecoration( 
+          color: Color.fromARGB(50, 0, 200, 10), 
+          borderRadius: BorderRadius.all( Radius.circular(7) ) 
         ),
 
+        width: size.width * 1,
+        height: size.height * 0.2,
         child: Padding(
-          padding: EdgeInsetsGeometry.all(10),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              Expanded(child: Text('Ficha #${ficha.id}', style: TextStyle( fontWeight: FontWeight.bold, fontSize: 17 ),)),
-
-              Expanded(child: Text('Programacion de software',  style: TextStyle(  fontSize: 12 ))),
-
-              Expanded(child: Text("Jornada ${ficha.jornada}")),
-
-              Expanded(child: Text('Etapa ${ficha.etapa}')),
-
-              FilledButton(                
-                style: ButtonStyle(
-                  shape: WidgetStatePropertyAll( RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(7)) ) 
+              Expanded(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text('${juicio.nombre} ${juicio.apellidos}', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),)
                 ),
-                onPressed: (){
-                  context.push('/aprendices/${ficha.id}');
-                }, 
-                child: Text('Visualizar Juicio')
-              )
+              ),
+              Expanded(
+                child: Text(juicio.tipoFocumento, style: TextStyle(fontSize: 17,),),
+              ),
+              Expanded(
+                child: Text(juicio.nroDocumento, style: TextStyle(fontSize: 17,),),
+              ),
+              Expanded(
+                child: Text(juicio.estado, style: TextStyle(fontSize: 17,),),
+              ),
+              Expanded(
+                child: Text(juicio.idFicha.toString(), style: TextStyle(fontSize: 17,),),
+              ),
 
             ],
-          ),
+          )
+        )
+      ),
+    );
+  }
+}
+
+
+class _CustomCompetenciasTable extends StatelessWidget {
+  final Juicio juicio;
+  const _CustomCompetenciasTable({required this.juicio});
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: DataTable(
+
+          dividerThickness: 1.2,
+
+          border: TableBorder.symmetric(
+            inside: BorderSide( color: Colors.grey.shade200, width: 1)
+          ),        
+          headingRowColor: WidgetStatePropertyAll( Color.fromARGB(20, 0, 200, 10) ),
+          headingTextStyle: const TextStyle( fontWeight: FontWeight.bold, fontSize: 15, ),  
+
+          columns: [
+            DataColumn(label: Text('Competencia') ),
+            DataColumn(label: Text('Estado')),
+            DataColumn(label: Text('# Resultados')),
+            DataColumn(label: Text('Resultados Aprobados')),
+          ], 
+          rows: juicio.competencias.map( (competencia ) =>
+            DataRow(
+              cells: [
+                DataCell(SizedBox( width: 200, child: Text(competencia.nombre, overflow: TextOverflow.ellipsis,))),
+                DataCell(Text(competencia.estado)),
+                DataCell(Text(competencia.resultados.length.toString())),
+                DataCell(Text( competencia.resultados.where( (resultado) => resultado.estado == 'Aprobado' ).length.toString() )),
+              ]
+            )
+          ).toList(),
         ),
-      )
+      ),
     );
   }
 }

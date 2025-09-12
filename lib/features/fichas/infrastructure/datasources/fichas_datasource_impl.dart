@@ -55,7 +55,6 @@ class FichasDatasourceImpl extends FichasDatasource{
               }
           )
       );
-      print( response.data['fichaActualizada']['ficha'] );
       final ficha = FichaMapper.jsonToEntity( response.data['fichaActualizada']['ficha'] );
       return ficha;
 

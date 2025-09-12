@@ -1,9 +1,9 @@
 
 
 import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
-import 'package:myntora_app/features/juicios/domain/entities/aprendiz.dart';
-import 'package:myntora_app/features/juicios/domain/repositories/aprendices_repositories.dart';
-import 'package:myntora_app/features/juicios/infrastructure/repositories/aprendices_repository_impl.dart';
+import 'package:myntora_app/features/aprendices/domain/entities/aprendiz.dart';
+import 'package:myntora_app/features/aprendices/domain/repositories/aprendices_repositories.dart';
+import 'package:myntora_app/features/aprendices/infrastructure/repositories/aprendices_repository_impl.dart';
 import 'package:myntora_app/features/shared/infrastructure/errors/errors.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -48,6 +48,25 @@ class Aprendices extends _$Aprendices {
     }
 
   }
+
+
+  // Future<(Aprendiz, Juicio)> getJuicioByAprendiz( int id ) async{
+
+  //   try {
+      
+  //     final (aprendiz, juicio) = aprendicesRepositoryImpl.getAprendizById(id, token);
+  //     print(aprendiz, juicio);
+
+  //   } on CustomError catch(e) {
+  //     state = state.copyWith( errorMessage: e.errorMessage, isLoading: false );
+  //     throw Exception("Error $e");
+  //   } catch (e) {
+  //     state = state.copyWith( errorMessage: 'Error no controlado', isLoading: false );
+  //     throw Exception("Error $e");
+  //   }
+
+  // }
+
 
 }
 

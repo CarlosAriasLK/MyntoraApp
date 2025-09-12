@@ -1,5 +1,5 @@
 
-import 'package:myntora_app/features/juicios/domain/entities/aprendiz.dart';
+import 'package:myntora_app/features/aprendices/domain/entities/aprendiz.dart';
 
 class AprendizMapper {
 
@@ -11,7 +11,7 @@ class AprendizMapper {
     apellidos: json['apellidos'], 
     tipoFocumento: json['tipo_documento'], 
     nroDocumento: json['nro_documento'], 
-    estado: json['estado']
+    estado: json['estado'], 
   );
 
 

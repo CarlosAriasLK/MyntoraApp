@@ -1,25 +1,25 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'programa_provider.dart';
+part of 'juicios_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$programasHash() => r'258ce0cb2bd17437aea51df791a27a77c93fc47f';
+String _$juiciosHash() => r'bcca4d797e09ad19c298be4e8951a4935ef4548c';
 
-/// See also [Programas].
-@ProviderFor(Programas)
-final programasProvider = NotifierProvider<Programas, ProgramaState>.internal(
-  Programas.new,
-  name: r'programasProvider',
+/// See also [Juicios].
+@ProviderFor(Juicios)
+final juiciosProvider = NotifierProvider<Juicios, JuiciosStatus>.internal(
+  Juicios.new,
+  name: r'juiciosProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$programasHash,
+      : _$juiciosHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$Programas = Notifier<ProgramaState>;
+typedef _$Juicios = Notifier<JuiciosStatus>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

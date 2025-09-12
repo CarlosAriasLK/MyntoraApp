@@ -2,9 +2,9 @@
 
 import 'package:dio/dio.dart';
 import 'package:myntora_app/config/constants/environment.dart';
-import 'package:myntora_app/features/juicios/domain/datasources/aprendices_datasources.dart';
-import 'package:myntora_app/features/juicios/domain/entities/aprendiz.dart';
-import 'package:myntora_app/features/juicios/infrastructure/mappers/aprendiz_mapper.dart';
+import 'package:myntora_app/features/aprendices/domain/datasources/aprendices_datasources.dart';
+import 'package:myntora_app/features/aprendices/domain/entities/aprendiz.dart';
+import 'package:myntora_app/features/aprendices/infrastructure/mappers/aprendiz_mapper.dart';
 import 'package:myntora_app/features/shared/infrastructure/errors/errors.dart';
 
 class AprendicesDatasourcesImpl implements AprendicesDatasources {
@@ -41,10 +41,28 @@ class AprendicesDatasourcesImpl implements AprendicesDatasources {
     }
   }
 
-  @override
-  Future<Aprendiz> getAprendizById(int id, String token) {
-    // TODO: implement getAprendizById
-    throw UnimplementedError();
-  }
+  // @override
+  // Future<(Aprendiz, Juicio)> getAprendizById(int id, String token) async{
+
+  //   try {
+
+  //     final response = await dio.get('/myntora/juicios/$id');
+      
+  //     return ( 
+  //       AprendizMapper.toEntity(response.data['juicios']['aprendiz']), 
+  //       JuicioMapper.juicioToEntity( response.data['juicios'] ) 
+  //     );
+
+
+  //   } on DioException catch(e) {
+  //     if( e.response?.statusCode == 401 ) {
+  //       throw CustomError('Token no valido');
+  //     }
+  //     throw Exception("Error: $e"); 
+  //   } catch (e) {
+  //     throw Exception("Error: $e"); 
+  //   }
+
+  // }
   
 }

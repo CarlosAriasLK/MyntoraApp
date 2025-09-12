@@ -61,6 +61,7 @@ class MainLayout extends ConsumerWidget {
               ),
 
               ListTile(
+                trailing: Icon(Icons.arrow_right),
                 title: const Text('Dashboard'),
                 leading: Icon(Icons.dashboard),
                 onTap: () {
@@ -69,6 +70,7 @@ class MainLayout extends ConsumerWidget {
                 },
               ),
               ListTile(
+                trailing: Icon(Icons.arrow_right),
                 title: const Text('Programas de formación'),
                 leading: Icon(Icons.menu_book),
                 onTap: () {
@@ -77,6 +79,7 @@ class MainLayout extends ConsumerWidget {
                 },
               ),
               ListTile(
+                trailing: Icon(Icons.arrow_right),
                 title: const Text('Fichas'),
                 leading: Icon(Icons.description),
                 onTap: () {
@@ -85,6 +88,7 @@ class MainLayout extends ConsumerWidget {
                 },
               ),
               ListTile(
+                trailing: Icon(Icons.arrow_right),
                 title: const Text('Juicios evaluativos'),
                 leading: Icon(Icons.rate_review),
                 onTap: () {
@@ -93,6 +97,7 @@ class MainLayout extends ConsumerWidget {
                 },
               ),
               ListTile(
+                trailing: Icon(Icons.arrow_right),
                 title: const Text('Usuarios'),
                 leading: Icon(Icons.people),
                 onTap: () {
@@ -115,6 +120,7 @@ class MainLayout extends ConsumerWidget {
                   PopupMenuItem(
                     value: 0,
                     child: ListTile(
+                      trailing: Icon(Icons.arrow_right),
                       leading: Icon(Icons.person_outline),
                       title: Text("Perfil"),
                     ),
@@ -122,6 +128,7 @@ class MainLayout extends ConsumerWidget {
                   PopupMenuItem(
                     value: 1,
                     child: ListTile(
+                      trailing: Icon(Icons.arrow_right),
                       leading: Icon(Icons.logout),
                       title: Text("Cerrar Sesión"),
                     ),
