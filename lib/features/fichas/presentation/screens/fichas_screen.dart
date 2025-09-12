@@ -1,26 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myntora_app/features/fichas/domain/domain.dart';
 import 'package:myntora_app/features/fichas/presentation/providers/fichas_provider.dart';
 import 'package:myntora_app/features/fichas/presentation/widgets/custom_creating_modal.dart';
 import 'package:myntora_app/features/fichas/presentation/widgets/custom_editing_modal.dart';
 
+ void showSnackbar( BuildContext context, String errorMessage ) {
+  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(errorMessage))
+  );
+}
 
-class FichasScreen extends ConsumerWidget {
+class FichasScreen extends ConsumerStatefulWidget {
   const FichasScreen({super.key});
 
+  @override
+  FichasScreenState createState() => FichasScreenState();
+}
 
-    void showSnackbar( BuildContext context, String errorMessage ) {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage))
-      );
-    }
+class FichasScreenState extends ConsumerState<FichasScreen> {
+  
+  @override
+  void initState() {
+    ref.read(fichasProvider.notifier).showFichas();
+    super.initState();
+  }
 
+  @override
+  Widget build(BuildContext context) {
 
-    @override
-    Widget build(BuildContext context, ref) {
+    final rol = ref.watch(authProvider).user?.rol;  
 
     final fichasState = ref.watch( fichasProvider );
     if ( fichasState.isLoading ) return Center(child: CircularProgressIndicator(),);
@@ -40,23 +52,26 @@ class FichasScreen extends ConsumerWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: EdgeInsetsGeometry.symmetric(horizontal: 15, vertical: 10),
-            child: FilledButton(
-              onPressed: (){
-                showDialog(
-                  context: context, 
-                  builder: (context) => CustomCreatingModal(),
-                );
-              }, 
-              style: ButtonStyle(
-                shape: WidgetStatePropertyAll(
-                  RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(7))
-                )
+
+          rol == 'admin'
+          ? Padding(
+              padding: EdgeInsetsGeometry.symmetric(horizontal: 15, vertical: 10),
+              child: FilledButton(
+                onPressed: (){
+                  showDialog(
+                    context: context, 
+                    builder: (context) => CustomCreatingModal(),
+                  );
+                }, 
+                style: ButtonStyle(
+                  shape: WidgetStatePropertyAll(
+                    RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(7))
+                  )
+                ),
+                child: Text('Cargar fichas'),
               ),
-              child: Text('Cargar fichas'),
-            ),
-          ),
+            )
+          : SizedBox(),
 
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -78,10 +93,11 @@ class _CustomDateTable extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
+
+    final rol = ref.watch(authProvider).user?.rol;
+
     return DataTable(
-      
       dividerThickness: 1.2,
-    
       border: TableBorder.symmetric(
         inside: BorderSide( color: Colors.grey.shade200, width: 1)
       ),
@@ -89,7 +105,7 @@ class _CustomDateTable extends ConsumerWidget {
       headingRowColor: WidgetStatePropertyAll( Color.fromARGB(20, 0, 200, 10) ),
       headingTextStyle: const TextStyle( fontWeight: FontWeight.bold, fontSize: 15, ),
     
-      columns: const [
+      columns: [
         DataColumn(label: Text('ID')),
         DataColumn(label: Text('Programa')),
         DataColumn(label: Text('Jornada')),
@@ -99,7 +115,9 @@ class _CustomDateTable extends ConsumerWidget {
         DataColumn(label: Text('Etapa')),
         DataColumn(label: Text('Jefe Ficha')),
         DataColumn(label: Text('Oferta')),
-        DataColumn(label: Text('Acciones')),
+        rol == 'admin' 
+        ? DataColumn(label: Text('Acciones'))
+        : DataColumn(label: Text(''))
       ],
       rows: fichas.map((ficha) {
         return DataRow(
@@ -113,25 +131,27 @@ class _CustomDateTable extends ConsumerWidget {
             DataCell(Text(ficha.etapa)),
             DataCell(Text(ficha.jefeFicha)),
             DataCell(Text(ficha.oferta)),
-            DataCell(
-              Row(
-                children: [
+            rol == 'admin' 
+            ? DataCell(
+                Row(
+                  children: [
 
-                  IconButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return CustomEditingModal( ficha: ficha, );
-                        },
-                      );
-                    },
-                    icon: const Icon(Icons.edit),
-                  ),
+                    IconButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return CustomEditingModal( ficha: ficha, );
+                          },
+                        );
+                      },
+                      icon: const Icon(Icons.edit),
+                    ),
 
-                ],
+                  ],
+                )
               )
-            ),
+            : DataCell(Text(''))
           ],
         );
       }).toList(),

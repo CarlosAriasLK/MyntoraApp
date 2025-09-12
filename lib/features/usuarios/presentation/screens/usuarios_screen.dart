@@ -4,35 +4,47 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 
 import 'package:myntora_app/features/usuarios/domain/entities/usuario.dart';
 import 'package:myntora_app/features/usuarios/presentation/providers/user_provider.dart';
 import 'package:myntora_app/features/usuarios/presentation/widgets/creating_user.dart';
 
-class UsuariosScreen extends ConsumerWidget {
-  
-  const UsuariosScreen({super.key});
+void showSnackBar( BuildContext context, String errorMessage ){
+  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(errorMessage))
+  );
+}
 
-  void showSnackBar( BuildContext context, String errorMessage ){
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(errorMessage))
-    );
+class UsuariosScreen extends ConsumerStatefulWidget {
+  const UsuariosScreen({super.key});
+  @override
+  UsuariosScreenState createState() => UsuariosScreenState();
+}
+
+class UsuariosScreenState extends ConsumerState<UsuariosScreen> {
+
+  @override
+  void initState() {
+    ref.read( usuarioProviderProvider.notifier ).getAllUsers();
+    super.initState();
   }
 
   @override
-  Widget build(BuildContext context, ref) {
+  Widget build(BuildContext context) {
 
+    final rol = ref.watch(authProvider).user?.rol;
     final usuariosStatus = ref.watch( usuarioProviderProvider );
-    if( usuariosStatus.isLoading )return Center(child: CircularProgressIndicator(),);
-
-    final usuarios = usuariosStatus.usuarios ?? [];
 
     ref.listen(usuarioProviderProvider, (previous, next) {
       if( next.errorMessage.isNotEmpty ) {
         showSnackBar(context, next.errorMessage);
       }
     },);
+
+    if( usuariosStatus.isLoading ) return Center(child: CircularProgressIndicator(),);
+    final usuarios = usuariosStatus.usuarios ?? [];
 
     return Scaffold(
       appBar: AppBar(
@@ -43,26 +55,28 @@ class UsuariosScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
 
-          Padding(
-            padding: EdgeInsetsGeometry.symmetric(horizontal: 15, vertical: 10),
-            child: FilledButton(
-              onPressed: (){
-                showMaterialModalBottomSheet(
-                  animationCurve: Curves.easeInOut,
-                  enableDrag: false,
-                  context: context, 
-                  builder: (context) => CreatingUser(),
-                );
+          rol == 'admin' 
+          ? Padding(
+              padding: EdgeInsetsGeometry.symmetric(horizontal: 15, vertical: 10),
+              child: FilledButton(
+                onPressed: (){
+                  showMaterialModalBottomSheet(
+                    animationCurve: Curves.easeInOut,
+                    enableDrag: false,
+                    context: context, 
+                    builder: (context) => CreatingUser(),
+                  );
 
-              }, 
-              style: ButtonStyle(
-                shape: WidgetStatePropertyAll(
-                  RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(7))
-                )
+                }, 
+                style: ButtonStyle(
+                  shape: WidgetStatePropertyAll(
+                    RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(7))
+                  )
+                ),
+                child: Text('Crear usuarios'),
               ),
-              child: Text('Crear usuarios'),
-            ),
-          ),
+            )
+          : SizedBox(),
 
 
           Padding(
@@ -86,6 +100,7 @@ class _CustomTableUsers extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
 
+    final rol = ref.watch(authProvider).user?.rol;
     return DataTable(
       dividerThickness: 1.2,
 
@@ -102,7 +117,9 @@ class _CustomTableUsers extends ConsumerWidget {
         DataColumn(label: Text('Rol')),
         DataColumn(label: Text('Correo')),
         DataColumn(label: Text('telefono')),
-        DataColumn(label: Text('Acciones')),
+        rol == 'admin' 
+        ? DataColumn(label: Text('Acciones'))
+        : DataColumn(label: Text(''))
       ], 
       rows: usuarios.map(( usuario ) {
         return DataRow(
@@ -125,11 +142,12 @@ class _CustomTableUsers extends ConsumerWidget {
                     icon: Icon(Icons.remove_red_eye)
                   ),
 
-                  IconButton(
-                    onPressed: (){}, 
-                    icon: Icon(Icons.edit)
-                  ),
-
+                  rol == 'admin'
+                  ? IconButton(
+                      onPressed: (){}, 
+                      icon: Icon(Icons.edit)
+                    )
+                  : SizedBox()
                 ],
               )
             ),

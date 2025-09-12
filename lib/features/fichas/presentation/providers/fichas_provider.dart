@@ -1,12 +1,11 @@
-
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:myntora_app/features/auth/infrastructure/errors/errors.dart';
 import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myntora_app/features/fichas/domain/domain.dart';
 import 'package:myntora_app/features/fichas/infrastructure/infrastructure.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
 
 part 'fichas_provider.g.dart';
 
@@ -19,14 +18,30 @@ class Fichas extends _$Fichas {
   FichasState build() {
     final authState = ref.watch( authProvider );
     token = authState.user?.token ?? 'no-token';
-
     repositoryImpl = FichasRepositoryImpl();
 
-    showFichas();
     return FichasState();
   }
 
+  Future<bool> _hayConexion() async {
+    final connectivityResults = await Connectivity().checkConnectivity();
+    return !connectivityResults.contains(ConnectivityResult.none);
+  }
+
+  Future<void> _verificarConexion() async {
+    if (!await _hayConexion()) {
+      state = state.copyWith(
+        errorMessage: 'No hay conexión a internet. Verifica tu conexión y vuelve a intentarlo.',
+        isLoading: false
+      );
+      throw Exception('Sin conexión a internet');
+    }
+  }
+
   Future<List<Ficha>> showFichas() async{
+    
+    await _verificarConexion();
+
     try{
       final fichas = await repositoryImpl.getFichas( token );
 
@@ -47,6 +62,7 @@ class Fichas extends _$Fichas {
   }
 
   Future<Ficha> updateFicha( Ficha nuevaFicha, int numeroFicha ) async{
+    state = state.copyWith( isLoading: true);
     try {
       final fichaActualizada = await repositoryImpl.updateFicha(token, numeroFicha, nuevaFicha);
 
@@ -73,7 +89,6 @@ class Fichas extends _$Fichas {
     }
 
   }
-
 
   Future<void> createFicha( Ficha ficha, File aprendices ) async{
     state = state.copyWith(isLoading: true);

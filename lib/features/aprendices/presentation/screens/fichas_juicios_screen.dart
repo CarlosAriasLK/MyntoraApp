@@ -1,20 +1,40 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:myntora_app/features/fichas/domain/entities/ficha.dart';
 import 'package:myntora_app/features/fichas/presentation/presentation.dart';
 
-class FichasJuiciosScreen extends ConsumerWidget {
+void showSnackBar( BuildContext context, String message ) {
+  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(message))
+  );
+}
 
+class FichasJuiciosScreen extends ConsumerStatefulWidget {
   const FichasJuiciosScreen({super.key});
+  @override
+  FichasJuiciosScreenState createState() => FichasJuiciosScreenState();
+}
+
+class FichasJuiciosScreenState extends ConsumerState<FichasJuiciosScreen> {
 
   @override
-  Widget build(BuildContext context, ref) {
+  void initState() {
+    ref.read(fichasProvider.notifier).showFichas();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final fichaState = ref.watch( fichasProvider );  
     if( fichaState.isLoading ) return Center(child: CircularProgressIndicator(),);
-    if( fichaState.errorMessage.isNotEmpty ) return Center(child: Text("Erorr: ${fichaState.errorMessage}"),);
+   
+    ref.listen(fichasProvider, (previous, next) {
+      if( next.errorMessage.isNotEmpty ) {
+        showSnackBar( context, next.errorMessage );
+      }
+    },);
 
     final fichas = fichaState.fichas ?? [];
 

@@ -58,32 +58,28 @@ class CustomModalState extends ConsumerState<CustomEditingModal> {
 
   final _formKey = GlobalKey<FormState>();
 
-
-  void showSuccesSnackBar( BuildContext context, String successMessage ) {
+  void showSnackbar( BuildContext context, String message ) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(successMessage ))
-    );
-  }
-  void showErrorSnackBar( BuildContext context, String errorMessage ) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text( errorMessage ))
+      SnackBar(content: Text( message ))
     );
   }
 
   @override
   Widget build(BuildContext context) {
 
+    final fichasState = ref.watch( fichasProvider );
+    if( fichasState.isLoading ) return Center(child: CircularProgressIndicator() ,); 
+
     ref.listen(fichasProvider, (previous, next) {
-      if( !next.isLoading ) {
-        if (next.errorMessage.isNotEmpty) {
-          showErrorSnackBar(context, next.errorMessage);
-        } else {
-          showSuccesSnackBar(context, 'Ficha Actualizada correctamente');
-        }
+      if( next.errorMessage.isNotEmpty ) {
+        showSnackbar( context, next.errorMessage );
+      }
+      if( next.errorMessage.isEmpty ) {
+        showSnackbar( context, 'Ficha actualizada correctamente!' );
       }
     },);
+
     final size = MediaQuery.of(context).size;
 
     return Dialog(

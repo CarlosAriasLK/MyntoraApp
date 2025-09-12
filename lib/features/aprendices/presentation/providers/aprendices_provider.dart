@@ -1,5 +1,6 @@
 
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myntora_app/features/aprendices/domain/entities/aprendiz.dart';
 import 'package:myntora_app/features/aprendices/domain/repositories/aprendices_repositories.dart';
@@ -26,7 +27,24 @@ class Aprendices extends _$Aprendices {
   }
 
 
+  Future<bool> _hayConexion() async {
+    final connectivityResults = await Connectivity().checkConnectivity();
+    return !connectivityResults.contains(ConnectivityResult.none);
+  }
+
+  Future<void> _verificarConexion() async {
+    if (!await _hayConexion()) {
+      state = state.copyWith(
+        errorMessage: 'No hay conexión a internet. Verifica tu conexión y vuelve a intentarlo.',
+        isLoading: false
+      );
+      throw Exception('Sin conexión a internet');
+    }
+  }
+
   Future<List<Aprendiz>> getAprendices( int idFicha ) async{
+
+    await _verificarConexion();
 
     try {
       
@@ -48,25 +66,6 @@ class Aprendices extends _$Aprendices {
     }
 
   }
-
-
-  // Future<(Aprendiz, Juicio)> getJuicioByAprendiz( int id ) async{
-
-  //   try {
-      
-  //     final (aprendiz, juicio) = aprendicesRepositoryImpl.getAprendizById(id, token);
-  //     print(aprendiz, juicio);
-
-  //   } on CustomError catch(e) {
-  //     state = state.copyWith( errorMessage: e.errorMessage, isLoading: false );
-  //     throw Exception("Error $e");
-  //   } catch (e) {
-  //     state = state.copyWith( errorMessage: 'Error no controlado', isLoading: false );
-  //     throw Exception("Error $e");
-  //   }
-
-  // }
-
 
 }
 

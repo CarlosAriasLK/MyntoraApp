@@ -3,6 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 
+void showSnackbar( BuildContext context, String message ){
+  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(message))
+  );
+}
+
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
@@ -59,12 +66,7 @@ class _LoginFormState extends ConsumerState<_LoginForm> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  void showSnackbar( BuildContext context, String message ){
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message))
-    );
-  }
+ 
 
   @override
   Widget build(BuildContext context) {

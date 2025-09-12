@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:myntora_app/features/auth/infrastructure/errors/errors.dart';
 import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myntora_app/features/programas/domain/domain.dart';
@@ -23,14 +24,32 @@ class Programas extends _$Programas {
     token = auhtProvider.user?.token ?? 'no-token';
 
     programaRepository = ProgramaRepositoryImpl();
-    getProgramas();
     return ProgramaState();
   }
 
+  Future<bool> _hayConexion() async {
+    final connectivityResults = await Connectivity().checkConnectivity();
+    return !connectivityResults.contains(ConnectivityResult.none);
+  }
+
+  Future<void> _verificarConexion() async {
+    if (!await _hayConexion()) {
+      state = state.copyWith(
+        errorMessage: 'No hay conexión a internet. Verifica tu conexión y vuelve a intentarlo.',
+        isLoading: false
+      );
+      throw Exception('Sin conexión a internet');
+    }
+  }
+  
+
   Future<List<Programa>> getProgramas() async{
     
+    await _verificarConexion();
+
     try {
       final programas = await programaRepository.getProgramas(token);
+      
       state = state.copyWith(
         programas: programas,
         errorMessage: '',
@@ -64,6 +83,37 @@ class Programas extends _$Programas {
       throw Exception('Error: $e');
     }
 
+  }
+
+
+  Future<Programa> updatePrograma( Programa programaFormacion ) async {
+
+    try {
+      
+      final programaActualizado = await programaRepository.updateProgramas(token, programaFormacion);
+
+      final programasActualizados = state.programas?.map<Programa>( (programa) {
+        if( programa.id == programaFormacion.id ) {
+          return programaActualizado;
+        }
+        return programa;
+      } ).toList();
+
+      state = state.copyWith(
+        errorMessage: '',
+        isLoading: false,
+        programas: programasActualizados
+      );
+
+      return programaActualizado;
+
+    } on CustomError catch(e) {
+      state = state.copyWith( errorMessage: e.errorMessage, isLoading: false );
+      throw Exception("Error: ${e.errorMessage}");
+    } catch (e) {
+      state = state.copyWith( errorMessage: 'Error no controlado', isLoading: false );
+      throw Exception("Error: $e");
+    }
   }
 
 }

@@ -25,8 +25,7 @@ class ProgramaDatasourceImpl extends ProgramaDatasource {
         )
       );
 
-      final programas = ProgramasMapper.jsonListToEntity( response.data['programas'] );
-      return programas;
+      return ProgramasMapper.jsonListToEntity( response.data['programas'] );
 
     } on DioException catch (e) {
       if( e.response?.statusCode == 401 ){
@@ -73,6 +72,42 @@ class ProgramaDatasourceImpl extends ProgramaDatasource {
     } catch (e) {
       throw Exception("Error: $e");
     }
+  }
+  
+  @override
+  Future<Programa> updateProgramas(String token, Programa programa) async{
+    
+    try {
+
+      final response = await dio.put('/myntora/actualizarprograma/${programa.id}',
+        data: {
+          "nombre_programa": programa.nombre,
+          "nivel": programa.nivel,
+          "estado": programa.estado
+        },
+        options: Options(
+          headers: {
+            "x-token": token
+          }
+        )
+      );
+
+      return ProgramasMapper.jsonToEntity( response.data['programaActualizado']['programa'] );
+
+    } on DioException catch(e) {
+      if( e.response?.statusCode == 400 ){
+        throw CustomError('Programa no encontrado');
+      }
+      if( e.response?.statusCode == 401 ){
+        throw CustomError('No autorizado (token)');
+      }
+      throw Exception('Error: $e');
+    } catch (e) {
+      throw Exception('Error: $e');
+      
+    }
+
+
   }
   
 }

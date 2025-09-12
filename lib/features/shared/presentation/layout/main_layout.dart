@@ -38,14 +38,20 @@ class MainLayout extends ConsumerWidget {
             children: [
 
               DrawerHeader(
+                padding: EdgeInsets.zero,
+
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+
                     FadeInImage(
                       height: (size.height - 300) * 0.1,
                       fit: BoxFit.cover,
                       placeholder: AssetImage('assets/images/no-image.jpg'),
                       image: AssetImage('assets/images/LogoSenaSinFondo.webp'),
                     ),
+
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
@@ -56,6 +62,7 @@ class MainLayout extends ConsumerWidget {
                         ],
                       ),
                     ),
+
                   ],
                 ),
               ),

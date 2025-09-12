@@ -8,10 +8,7 @@ import 'package:myntora_app/features/programas/infrastructure/datasources/progra
 class ProgramaRepositoryImpl extends ProgramaRepository{
 
   final ProgramaDatasource datasource;
-  
-  ProgramaRepositoryImpl({
-    ProgramaDatasource? datasource
-  }): datasource = datasource ?? ProgramaDatasourceImpl();
+  ProgramaRepositoryImpl({ ProgramaDatasource? datasource }): datasource = datasource ?? ProgramaDatasourceImpl();
 
   @override
   Future<List<Programa>> getProgramas( String token ) {
@@ -21,6 +18,11 @@ class ProgramaRepositoryImpl extends ProgramaRepository{
   @override
   Future<void> createPrograma(String token, String nombrePrograma, String nivelPrograma, File competenciasyresultados ) {
     return datasource.createPrograma(token, nombrePrograma, nivelPrograma, competenciasyresultados);
+  }
+  
+  @override
+  Future<Programa> updateProgramas(String token, Programa programa) {
+    return datasource.updateProgramas(token, programa);
   }
 
 }

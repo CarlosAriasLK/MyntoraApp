@@ -1,5 +1,6 @@
 
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:myntora_app/features/auth/infrastructure/errors/errors.dart';
 import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myntora_app/features/usuarios/domain/entities/usuario.dart';
@@ -20,11 +21,25 @@ class UsuarioProvider extends _$UsuarioProvider {
   UserStatus build() {
     final userProvider = ref.watch( authProvider );
     token = userProvider.user?.token ?? 'no-token';
-
     repositoryImpl = UsuariosRepositoriesImpl();
 
-    getAllUsers();
     return UserStatus();
+  }
+
+
+  Future<bool> _hayConexion() async {
+    final connectivityResults = await Connectivity().checkConnectivity();
+    return !connectivityResults.contains( ConnectivityResult.none ); 
+  }
+
+  Future<void> _checkConnection() async {
+    if( !await _hayConexion() ) {
+      state = state.copyWith(
+        errorMessage: 'No hay conexión a internet. Verifica tu conexión y vuelve a intentarlo.',
+        isLoading: false
+      );
+      throw Exception('Sin conexion a internet');
+    }
   }
 
   Future<void> createUser( Usuario usuario ) async {
@@ -44,8 +59,9 @@ class UsuarioProvider extends _$UsuarioProvider {
 
   }
 
-
   Future<List<Usuario>> getAllUsers() async{
+
+    await _checkConnection();
 
     try {
       final allUsers = await repositoryImpl.getUsuarios( token );
@@ -67,7 +83,6 @@ class UsuarioProvider extends _$UsuarioProvider {
     }
 
   }
-
 
   Future<Usuario> updateUser( Usuario usuario, int uid ) async{
 

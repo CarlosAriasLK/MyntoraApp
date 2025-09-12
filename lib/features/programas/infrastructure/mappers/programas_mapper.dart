@@ -14,4 +14,13 @@ class ProgramasMapper {
     )).toList();
   }
 
+  static Programa jsonToEntity( Map<String, dynamic> json ) => Programa(
+    id: json['id'],
+    nombre: json['nombre_programa'],
+    nivel: json['nivel'],
+    estado: json['estado'],
+  );
+
+
+
 }

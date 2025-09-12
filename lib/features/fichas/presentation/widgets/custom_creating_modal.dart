@@ -42,13 +42,29 @@ class CustomCreatingModalState extends ConsumerState<CustomCreatingModal> {
     }  
   }
 
-  final DateFormat formatter = DateFormat('yyyy-MM-dd');
+  final formatter = DateFormat('yyyy-MM-dd');
+
+  void showSnackbar( BuildContext context, String message ) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text( message ))
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
 
-
     final programasState = ref.watch(programasProvider);
+    if( programasState.isLoading ) return Center(child: CircularProgressIndicator() ,); 
+
+    ref.listen( programasProvider, (previous, next) {
+      if( next.errorMessage.isNotEmpty ) {
+        showSnackbar( context, next.errorMessage );
+      }
+      if( next.errorMessage.isEmpty ) {
+        showSnackbar( context, 'Ficha creada correctamente!' );
+      }
+    },);
 
     final idProgramas = programasState.programas?.map((programa) {
       return DropdownMenuItem(

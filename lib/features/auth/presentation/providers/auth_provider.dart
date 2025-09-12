@@ -20,12 +20,11 @@ class Auth extends _$Auth {
     repositoryImpl = AuthRepositoryImpl();
     keyValueStorage = KeyValueStorageImpl();
 
-    _chechAuthStatus();
+    chechAuthStatus();
     return AuthState();
   }
-
+  
   Future<void> loginUser( String email, String password ) async{
-
     try {
       final user = await repositoryImpl.login(email, password);
       await keyValueStorage.setKeyValue('token', user.token );
@@ -44,7 +43,7 @@ class Auth extends _$Auth {
   }
 
 
-  Future<void> _chechAuthStatus() async{
+  Future<void> chechAuthStatus() async{
     final token = await keyValueStorage.getValue<String>('token');
     if( token == null ) return logout();
 
@@ -71,7 +70,6 @@ class Auth extends _$Auth {
         user: null
     );
   }
-
 }
 
 enum AuthStatus { checking, authenticated, notAuthenticated }
