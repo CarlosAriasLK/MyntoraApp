@@ -57,5 +57,33 @@ class AuthDatasourceImpl extends AuthDatasource {
     }
 
   }
+  
+  @override
+  Future<void> changePasword(String uid, String newPassword) async{
+    
+    try {
+      
+      await dio.post('/auth/cambiar-password',
+        data: {
+          'nuevaContrasenia': newPassword,
+          'uid': uid
+        }
+      );
 
+    } on DioException catch (e) {
+      if( e.response?.statusCode == 500 ){
+        throw CustomError( e.response?.data['ERROR'] );
+      }
+      if( e.response?.statusCode == 401 ){
+        throw CustomError('Error al actualizar la contrasña');
+      }
+
+      throw Exception('Error: $e');
+    } catch (e) {
+      throw Exception(e);
+    }
+
+
+  }
+  
 }

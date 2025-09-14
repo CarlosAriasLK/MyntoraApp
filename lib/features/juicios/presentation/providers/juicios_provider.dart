@@ -2,6 +2,7 @@
 
 
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:myntora_app/features/auth/infrastructure/errors/errors.dart';
 import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myntora_app/features/juicios/domain/entities/juicio.dart';
@@ -28,7 +29,27 @@ class Juicios extends _$Juicios {
   }
 
 
+  Future<bool> _checkConnectivity() async{
+    final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
+    return !connectivityResult.contains(ConnectivityResult.none);
+  }
+  Future<void> _checkInternet() async {
+    if( !await _checkConnectivity() ) {
+      state = state.copyWith(
+        errorMessage: 'Sin internet. Revise su conexion e intentelo de nuevo mas tarde',
+        isLoading: false,
+      );
+      throw Exception('Sin conexion a internet');
+    }
+
+  }
+  
+
   Future<Juicio> getJuicioById( int id ) async{
+    await _checkInternet();
+
+    // state = state.copyWith( isLoading: true );
+
     try {
       final juicio = await repositoryImpl.getAprendizById(id, token);
 

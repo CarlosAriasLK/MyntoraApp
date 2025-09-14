@@ -22,6 +22,7 @@ class Fichas extends _$Fichas {
 
     return FichasState();
   }
+  
 
   Future<bool> _hayConexion() async {
     final connectivityResults = await Connectivity().checkConnectivity();
@@ -38,8 +39,8 @@ class Fichas extends _$Fichas {
     }
   }
 
+
   Future<List<Ficha>> showFichas() async{
-    
     await _verificarConexion();
 
     try{
@@ -61,7 +62,10 @@ class Fichas extends _$Fichas {
     }
   }
 
+
   Future<Ficha> updateFicha( Ficha nuevaFicha, int numeroFicha ) async{
+    await _verificarConexion();
+
     state = state.copyWith( isLoading: true);
     try {
       final fichaActualizada = await repositoryImpl.updateFicha(token, numeroFicha, nuevaFicha);
@@ -90,7 +94,10 @@ class Fichas extends _$Fichas {
 
   }
 
+
   Future<void> createFicha( Ficha ficha, File aprendices ) async{
+    await _verificarConexion();
+
     state = state.copyWith(isLoading: true);
     try {
       await repositoryImpl.createFicha(token, ficha, aprendices);
@@ -104,6 +111,7 @@ class Fichas extends _$Fichas {
     }
 
   }
+
 
 }
 

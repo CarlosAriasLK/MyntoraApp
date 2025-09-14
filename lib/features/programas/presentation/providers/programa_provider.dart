@@ -27,6 +27,7 @@ class Programas extends _$Programas {
     return ProgramaState();
   }
 
+
   Future<bool> _hayConexion() async {
     final connectivityResults = await Connectivity().checkConnectivity();
     return !connectivityResults.contains(ConnectivityResult.none);
@@ -44,7 +45,6 @@ class Programas extends _$Programas {
   
 
   Future<List<Programa>> getProgramas() async{
-    
     await _verificarConexion();
 
     try {
@@ -70,6 +70,8 @@ class Programas extends _$Programas {
 
 
   Future<void> createProgramas( String nombrePrograma, String nivelPrograma, File competenciasyresultados  ) async {
+    await _verificarConexion();
+
     state = state.copyWith(isLoading: true);
     try {
       await programaRepository.createPrograma(token, nombrePrograma, nivelPrograma, competenciasyresultados);
@@ -87,6 +89,7 @@ class Programas extends _$Programas {
 
 
   Future<Programa> updatePrograma( Programa programaFormacion ) async {
+    await _verificarConexion();
 
     try {
       

@@ -8,4 +8,6 @@ abstract class AuthDatasource {
 
   Future<User> checkLogin( String token );
 
+  Future<void> changePasword( String uid, String newPassword );
+
 }

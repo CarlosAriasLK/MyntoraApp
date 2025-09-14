@@ -21,5 +21,10 @@ class AuthRepositoryImpl extends AuthRepository {
   Future<User> login(String email, String password) {
     return datasource.login(email, password);
   }
+  
+  @override
+  Future<void> changePasword(String token, String newPassword) {
+    return datasource.changePasword(token, newPassword);
+  }
 
 }

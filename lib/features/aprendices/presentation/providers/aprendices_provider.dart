@@ -26,19 +26,18 @@ class Aprendices extends _$Aprendices {
     return AprendizStatus();
   }
 
-
-  Future<bool> _hayConexion() async {
-    final connectivityResults = await Connectivity().checkConnectivity();
-    return !connectivityResults.contains(ConnectivityResult.none);
+  Future<bool> _hayConnexion() async{
+    final List<ConnectivityResult> connectivityResult = await Connectivity().checkConnectivity();
+    return !connectivityResult.contains(ConnectivityResult.none);
   }
 
-  Future<void> _verificarConexion() async {
-    if (!await _hayConexion()) {
-      state = state.copyWith(
-        errorMessage: 'No hay conexión a internet. Verifica tu conexión y vuelve a intentarlo.',
-        isLoading: false
+  Future<void> _verificarConexion() async{
+    if( !await _hayConnexion() ) {
+      state = state.copyWith( 
+        errorMessage: 'Sin conexion a intenet. Intentelo de nuevo mas tarde',
+        isLoading: false,
       );
-      throw Exception('Sin conexión a internet');
+      throw Exception('Sin conextion a internte');
     }
   }
 

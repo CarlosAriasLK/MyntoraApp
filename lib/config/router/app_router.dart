@@ -4,13 +4,14 @@ import 'package:go_router/go_router.dart';
 import 'package:myntora_app/features/auth/auth.dart';
 import 'package:myntora_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myntora_app/features/auth/presentation/screens/check_auth_status.dart';
+import 'package:myntora_app/features/dashboard/presentation/screens/dashboard.dart';
 
 import 'package:myntora_app/features/fichas/presentation/screens/fichas_screen.dart';
 import 'package:myntora_app/features/aprendices/presentation/screens/aprendices_screen.dart';
 import 'package:myntora_app/features/aprendices/presentation/screens/fichas_juicios_screen.dart';
 import 'package:myntora_app/features/juicios/presentation/screens/juicios_screen.dart';
 
-import 'package:myntora_app/features/myntora/myntora.dart';
+
 import 'package:myntora_app/features/programas/presentation/presentation.dart';
 import 'package:myntora_app/features/shared/presentation/layout/main_layout.dart';
 import 'package:myntora_app/features/usuarios/presentation/screens/usuarios_screen.dart';
@@ -51,7 +52,7 @@ GoRouter goRouter(Ref ref) {
           routes: [
             GoRoute(
               path: '/home',
-              builder: (context, state) => HomeScreen(),
+              builder: (context, state) => Dashboard(),
             ),
 
             GoRoute(

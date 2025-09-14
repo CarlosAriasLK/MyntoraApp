@@ -41,8 +41,11 @@ class UsuarioProvider extends _$UsuarioProvider {
       throw Exception('Sin conexion a internet');
     }
   }
+  
 
   Future<void> createUser( Usuario usuario ) async {
+    await _checkConnection();
+
     state = state.copyWith( isLoading: true );
     try {
 
@@ -59,8 +62,8 @@ class UsuarioProvider extends _$UsuarioProvider {
 
   }
 
-  Future<List<Usuario>> getAllUsers() async{
 
+  Future<List<Usuario>> getAllUsers() async{
     await _checkConnection();
 
     try {
@@ -84,7 +87,9 @@ class UsuarioProvider extends _$UsuarioProvider {
 
   }
 
+
   Future<Usuario> updateUser( Usuario usuario, int uid ) async{
+    await _checkConnection();
 
     try {
       final usuarioActalizado = await repositoryImpl.updateUsuario( token, usuario );
@@ -114,7 +119,9 @@ class UsuarioProvider extends _$UsuarioProvider {
 
   }
 
+
   Future<Usuario> getUsuarioByid( int uid ) async{
+    await _checkConnection();
 
     try {
       
@@ -138,9 +145,6 @@ class UsuarioProvider extends _$UsuarioProvider {
       throw Exception("Error: $e");
     }
   }
-
-
-  
 
 }
 
